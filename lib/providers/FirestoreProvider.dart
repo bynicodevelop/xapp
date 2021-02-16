@@ -38,6 +38,8 @@ class FirestoreProvider {
 
   get profilPosts => _profilePostModels;
 
+  cleanProfilePosts() => _profilePostModels.clear();
+
   /// Permet de récupérer un post pour le feed
   getPost({
     int limit = 2,
@@ -130,8 +132,8 @@ class FirestoreProvider {
   }
 
   Future getProfilePosts(String userId) async {
-    if (_profilePostModels.length >= Config.maxPostWhenUserIsNotAuthenticated)
-      return;
+    if (_profilePostModels.length >= Config.maxPostWhenUserIsNotAuthenticated &&
+        !authProvider.isAuthenticated) return;
 
     DocumentReference documentReference =
         firestore.collection('users').doc(userId);

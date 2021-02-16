@@ -5,8 +5,6 @@ import 'package:xapp/providers/AuthProvider.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
-
-import 'package:xapp/screens/LandingPage.dart';
 import 'package:xapp/widget/FeedPost.dart';
 
 class Feed extends StatefulWidget {

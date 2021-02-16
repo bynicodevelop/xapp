@@ -73,6 +73,12 @@ class _PublicProfileState extends State<PublicProfile> {
   }
 
   @override
+  void dispose() {
+    _firestoreProvider.cleanProfilePosts();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () => widget.onBack(),
