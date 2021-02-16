@@ -22,7 +22,13 @@ class _HomeState extends State<Home> {
       children: [
         Camera(),
         Feed(),
-        PublicProfile(),
+        PublicProfile(
+          onBack: () => _pageController.animateToPage(
+            1,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.ease,
+          ),
+        ),
       ],
     );
   }

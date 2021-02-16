@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xapp/Config.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Thanks.dart';
@@ -91,16 +92,15 @@ class _BookingState extends State<Booking> {
                     style: Theme.of(context).textTheme.headline1,
                   ),
                 ),
-                Visibility(
-                  visible: widget.email.isNotEmpty,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 10.0,
-                    ),
-                    child: Text(
-                      "L'adresse email que vous avez saisie, ne fait pas partie de nos invités.",
-                      style: Theme.of(context).textTheme.bodyText2,
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 10.0,
+                  ),
+                  child: Text(
+                    widget.email.isNotEmpty
+                        ? "L'adresse email que vous avez saisie, ne fait pas partie de nos invités."
+                        : "${Config.appName} est encore en plein lancement.",
+                    style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),
                 Padding(
@@ -117,7 +117,7 @@ class _BookingState extends State<Booking> {
                     bottom: 10.0,
                   ),
                   child: Text(
-                    "Vous pouvez réserver votre nom d'utilisateur",
+                    "Vous pouvez réserver votre nom d'utilisateur.",
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),

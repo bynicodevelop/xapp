@@ -11,7 +11,7 @@ class Error extends StatelessWidget {
       home: Scaffold(
         body: Container(
           child: Center(
-            child: Text('Unooccured error.'),
+            child: Text('Unoccured error.'),
           ),
         ),
       ),

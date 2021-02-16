@@ -1,11 +1,28 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:xapp/models/Post.dart';
+import 'package:xapp/models/PostModel.dart';
+import 'package:xapp/providers/AuthProvider.dart';
+import 'package:xapp/providers/FirestoreProvider.dart';
+import 'package:xapp/providers/FunctionProvider.dart';
+import 'package:xapp/screens/LandingPage.dart';
 import 'package:xapp/widget/LikeButton.dart';
 
 class FeedPost extends StatelessWidget {
-  final Post post;
+  final AuthProvider authProvider;
+  final FirestoreProvider firestoreProvider;
+  final FunctionProvider functionProvider;
+  final PostModel post;
+  final bool isLast;
 
-  const FeedPost({Key key, this.post}) : super(key: key);
+  const FeedPost({
+    Key key,
+    this.authProvider,
+    this.firestoreProvider,
+    this.functionProvider,
+    this.post,
+    this.isLast = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +60,32 @@ class FeedPost extends StatelessWidget {
             ],
           ),
         ),
+        Visibility(
+          visible: isLast && !authProvider.isAuthenticated,
+          child: Positioned(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 8.0,
+                sigmaY: 8.0,
+              ),
+              child: Container(
+                constraints: BoxConstraints.expand(),
+                color: Colors.white.withOpacity(.4),
+              ),
+            ),
+          ),
+        ),
+        Visibility(
+          visible: isLast && !authProvider.isAuthenticated,
+          child: Positioned(
+            child: LandingPage(
+              firestoreProvider: firestoreProvider,
+              functionProvider: functionProvider,
+            ),
+          ),
+        )
       ],
     );
   }

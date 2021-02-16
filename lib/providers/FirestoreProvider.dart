@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:xapp/models/Post.dart';
-import 'package:xapp/models/User.dart';
+import 'package:xapp/Config.dart';
+import 'package:xapp/models/PostModel.dart';
+import 'package:xapp/models/UserModel.dart';
 import 'package:xapp/providers/AuthProvider.dart';
 
 enum INVITED {
@@ -13,11 +14,13 @@ enum INVITED {
 }
 
 class FirestoreProvider {
-  final List<Post> _posts = List<Post>();
-  Post _currentPost;
+  final List<PostModel> _posts = List<PostModel>();
+  PostModel _currentPost;
 
-  final StreamController<List<Post>> _postsStream =
-      StreamController<List<Post>>.broadcast();
+  final StreamController<List<PostModel>> _postsStream =
+      StreamController<List<PostModel>>.broadcast();
+
+  final List<PostModel> _profilePostModels = List<PostModel>();
 
   final FirebaseFirestore firestore;
   final AuthProvider authProvider;
@@ -31,12 +34,14 @@ class FirestoreProvider {
 
   set currentPost(value) => _currentPost = value;
 
-  Stream<List<Post>> get posts => _postsStream.stream;
+  Stream<List<PostModel>> get posts => _postsStream.stream;
+
+  get profilPosts => _profilePostModels;
 
   /// Permet de récupérer un post pour le feed
   getPost({
     int limit = 2,
-    Post post,
+    PostModel post,
   }) async {
     Query query = this
         .firestore
@@ -58,22 +63,22 @@ class FirestoreProvider {
             (post) {
               final dynamic data = post.data();
 
-              print('Post Id: ${post.id}');
+              print('PostModel Id: ${post.id}');
 
               // TODO: Voir s'il n'es pas possible de stocker les requêtes
               data['userRef'].get().then((user) {
-                User userModel = User.fromJson({
+                UserModel userModel = UserModel.fromJson({
                   ...user.data(),
-                  ...{User.ID: user.id}
+                  ...{UserModel.ID: user.id}
                 });
 
                 _posts.add(
-                  Post.fromJson({
+                  PostModel.fromJson({
                     ...data,
                     ...{
-                      Post.ID: post.id,
-                      Post.DOCUMENT: post,
-                      Post.USER: userModel,
+                      PostModel.ID: post.id,
+                      PostModel.DOCUMENT: post,
+                      PostModel.USER: userModel,
                     }
                   }),
                 );
@@ -122,5 +127,38 @@ class FirestoreProvider {
     }
 
     return Future.value(INVITED.VALID);
+  }
+
+  Future getProfilePosts(String userId) async {
+    if (_profilePostModels.length >= Config.maxPostWhenUserIsNotAuthenticated)
+      return;
+
+    DocumentReference documentReference =
+        firestore.collection('users').doc(userId);
+
+    Query postQuery = firestore
+        .collection('posts')
+        .orderBy('createdAt')
+        .where('userRef', isEqualTo: documentReference)
+        .limit(6);
+
+    if (_profilePostModels.length > 0) {
+      postQuery =
+          postQuery.startAfterDocument(_profilePostModels.last.document);
+    }
+
+    QuerySnapshot postQuerySnapshot = await postQuery.get();
+
+    postQuerySnapshot.docs.forEach((doc) {
+      _profilePostModels.add(
+        PostModel.fromJson({
+          ...doc.data(),
+          ...{
+            PostModel.ID: doc.id,
+            PostModel.DOCUMENT: doc,
+          }
+        }),
+      );
+    });
   }
 }

@@ -58,20 +58,18 @@ class _FeedState extends State<Feed> {
           }
 
           List<Widget> widgets = snapshot.data
+              .asMap()
+              .entries
               .map<Widget>(
-                (post) => FeedPost(
-                  post: post,
+                (entry) => FeedPost(
+                  authProvider: _authProvider,
+                  firestoreProvider: _firestoreProvider,
+                  functionProvider: _functionProvider,
+                  post: entry.value,
+                  isLast: entry.key == Config.maxPostWhenUserIsNotAuthenticated,
                 ),
               )
               .toList();
-
-          if (!_authProvider.isAuthenticated &&
-              widgets.length >= Config.maxPostWhenUserIsNotAuthenticated) {
-            widgets.add(LandingPage(
-              firestoreProvider: _firestoreProvider,
-              functionProvider: _functionProvider,
-            ));
-          }
 
           return PageView(
             controller: _pageController,

@@ -1,113 +1,312 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
-import 'package:xapp/models/User.dart';
+import 'package:xapp/models/PostModel.dart';
+import 'package:xapp/models/UserModel.dart';
+import 'package:xapp/providers/AuthProvider.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
+import 'package:xapp/screens/auth/Booking.dart';
+import 'package:xapp/screens/auth/Login.dart';
 import 'package:xapp/widget/Stat.dart';
+import 'package:xapp/widget/form/SecondaryButton.dart';
 
 class PublicProfile extends StatefulWidget {
-  const PublicProfile({Key key}) : super(key: key);
+  final Function onBack;
+  const PublicProfile({
+    Key key,
+    this.onBack,
+  }) : super(key: key);
 
   @override
   _PublicProfileState createState() => _PublicProfileState();
 }
 
 class _PublicProfileState extends State<PublicProfile> {
+  final ScrollController _scrollController = new ScrollController();
+  AuthProvider _authProvider;
   FirestoreProvider _firestoreProvider;
 
-  User _user;
+  bool _loading = true;
+  bool _reload = false;
+
+  UserModel _user;
+
+  // = UserModel(
+  //   id: "7Bu8TQsvGTSvIUnGKsXMXI3qvgmx",
+  //   displayName: "Jess e",
+  //   slug: "jess-e",
+  //   status: "Coucou mon petit",
+  //   followers: 2,
+  //   followings: 3,
+  //   photoURL:
+  //       "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+  // );
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(() {
+      double maxScroll = _scrollController.position.maxScrollExtent;
+      double currentScroll = _scrollController.position.pixels;
+      double delta = 50.0;
+
+      if (maxScroll - currentScroll <= delta && !_reload) {
+        print('load next posts...');
+        setState(() => _reload = true);
+
+        _firestoreProvider.getProfilePosts(_user.id).then(
+              (_) => setState(() => _reload = false),
+            );
+      }
+    });
+
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     _firestoreProvider = Provider.of<FirestoreProvider>(context, listen: false);
-
     setState(() => _user = _firestoreProvider.currentPost.user);
+
+    _firestoreProvider.getProfilePosts(_user.id).then(
+          (_) => setState(() => _loading = false),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 10.0,
-                  ),
-                  child: Hero(
+    return WillPopScope(
+      onWillPop: () => widget.onBack(),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: SingleChildScrollView(
+          controller: _scrollController,
+          padding: const EdgeInsets.only(
+            bottom: 2.0,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Column(
+                children: [
+                  Hero(
                     tag: _user.id,
                     child: CircleAvatar(
                       backgroundImage: NetworkImage(_user.photoURL),
                       radius: 70,
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10.0,
-                  ),
-                  child: Text(
+                  Text(
                     _user.displayName,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline3,
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                  ),
-                  child: Text(
-                    (_user.status ?? ''),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 20.0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Stat(
-                        label: 'Followers',
-                        number: _user.followers,
-                        align: Stat.LEFT,
-                      ),
-                      Stat(
-                        label: 'Followings',
-                        number: _user.followings,
-                        align: Stat.RIGHT,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10.0,
-                    horizontal: 50.0,
-                  ),
-                  child: SizedBox(
-                    height: 45.0,
-                    width: MediaQuery.of(context).size.width,
-                    child: RaisedButton(
-                      onPressed: () => print('Follow'),
-                      child: Text('Follow'.toUpperCase()),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                    ),
+                    child: Text(
+                      (_user.status ?? ''),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyText2,
                     ),
                   ),
-                )
-              ],
-            )
-          ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20.0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Stat(
+                          label: 'Followers',
+                          number: _user.followers,
+                          align: Stat.LEFT,
+                        ),
+                        Stat(
+                          label: 'Followings',
+                          number: _user.followings,
+                          align: Stat.RIGHT,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 40.0,
+                      left: 50.0,
+                      right: 50.0,
+                    ),
+                    child: SizedBox(
+                      height: 45.0,
+                      width: MediaQuery.of(context).size.width,
+                      child: RaisedButton(
+                        onPressed: () => print('Follow'),
+                        child: Text('Follow'.toUpperCase()),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Stack(
+                children: [
+                  Visibility(
+                    visible: _loading,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 70.0,
+                      ),
+                      child: SpinKitThreeBounce(
+                        color: Colors.black,
+                        size: 15.0,
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: !_loading,
+                    child: GridView(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 2,
+                        mainAxisSpacing: 2,
+                        childAspectRatio: .7,
+                      ),
+                      children: _firestoreProvider.profilPosts
+                          .map<Widget>(
+                            (PostModel post) => Builder(
+                              builder: (context) {
+                                final width = MediaQuery.of(context).size.width;
+                                final height =
+                                    MediaQuery.of(context).size.height;
+
+                                return _authProvider.isAuthenticated
+                                    ? Container(
+                                        child: Image(
+                                          width: width,
+                                          height: height,
+                                          image: NetworkImage(post.imageURL),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Container(
+                                        constraints: BoxConstraints.expand(),
+                                        child: Stack(
+                                          children: [
+                                            Image(
+                                              width: width,
+                                              height: height,
+                                              image:
+                                                  NetworkImage(post.imageURL),
+                                              fit: BoxFit.cover,
+                                            ),
+                                            Positioned(
+                                              width: width,
+                                              height: height,
+                                              child: BackdropFilter(
+                                                filter: ImageFilter.blur(
+                                                  sigmaX: 8.0,
+                                                  sigmaY: 8.0,
+                                                ),
+                                                child: Container(
+                                                  constraints:
+                                                      BoxConstraints.expand(),
+                                                  color: Colors.white
+                                                      .withOpacity(.4),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                              },
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                  Visibility(
+                    visible: !_authProvider.isAuthenticated && !_loading,
+                    child: Positioned(
+                      top: 0,
+                      left: 0,
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50.0,
+                          vertical: 50.0,
+                        ),
+                        color: Colors.black.withOpacity(.3),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: 15.0,
+                                ),
+                                child: Text(
+                                  "Pour accéder au contenu de ${_user.displayName}, veuillez vous connecter.",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2
+                                      .copyWith(
+                                        height: 1.4,
+                                        fontSize: 16.0,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 50.0,
+                                width: 200.0,
+                                child: SecondaryButton(
+                                  label: "Me connecter",
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Login(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              MaterialButton(
+                                child: Text(
+                                  "Créer un compte",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2
+                                      .copyWith(
+                                        fontStyle: FontStyle.italic,
+                                        color: Colors.white,
+                                      ),
+                                ),
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Booking(
+                                        // firestoreProvider: firestoreProvider,
+                                        // functionProvider: functionProvider,
+                                        ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -80,6 +80,7 @@ class App extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               primaryColor: Color(Config.primaryColor),
+              accentColor: Color(0xFFFF8F00),
               textTheme: TextTheme(
                 button: TextStyle(
                   fontSize: 16.0,
@@ -99,17 +100,14 @@ class App extends StatelessWidget {
             home: Builder(
               builder: (context) => StreamBuilder(
                 stream: Provider.of<AuthProvider>(context).user,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.active) {
+                builder: (context, snapshotUser) {
+                  if (snapshotUser.connectionState != ConnectionState.active) {
                     return Loading();
                   }
 
-                  if (snapshot.hasData) {
-                    print(snapshot.error);
+                  if (snapshotUser.hasError) {
                     return Error();
                   }
-
-                  print('User: ${snapshot.data}');
 
                   return Home();
                 },

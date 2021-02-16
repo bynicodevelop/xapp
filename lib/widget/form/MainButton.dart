@@ -4,11 +4,13 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 class MainButton extends StatefulWidget {
   final Function onPressed;
   final String label;
+  final Color color;
 
   const MainButton({
     Key key,
     @required this.onPressed,
     @required this.label,
+    this.color,
   }) : super(key: key);
 
   @override
@@ -28,7 +30,8 @@ class _MainButtonState extends State<MainButton> {
         width: MediaQuery.of(context).size.width,
         height: 55.0,
         child: RaisedButton(
-          onPressed: _loading
+          color: widget.color,
+          onPressed: _loading || widget.onPressed == null
               ? null
               : () async {
                   setState(() => _loading = true);

@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:xapp/models/UserModel.dart';
 
 class AuthProvider {
   final FirebaseAuth auth;
@@ -11,7 +12,7 @@ class AuthProvider {
 
   bool get isAuthenticated => _connected;
 
-  Stream<Map<String, dynamic>> get user {
+  Stream<UserModel> get user {
     return auth.authStateChanges().asyncMap((user) async {
       print('Auth user: $user');
 
@@ -19,8 +20,20 @@ class AuthProvider {
 
       _connected = true;
 
-      return {};
+      return UserModel(id: user.uid, email: user.email);
     });
+  }
+
+  Future login(String email, String password) async {
+    try {
+      await auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      print(e.code);
+      throw new Exception(e.code);
+    }
   }
 
   Future logout() async {
