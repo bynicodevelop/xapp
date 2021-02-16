@@ -1,10 +1,13 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:xapp/providers/AuthProvider.dart';
 
 class FunctionProvider {
   final FirebaseFunctions functions;
+  final AuthProvider auth;
 
   const FunctionProvider({
     this.functions,
+    this.auth,
   });
 
   Future<bool> createUserReservation(
@@ -40,5 +43,35 @@ class FunctionProvider {
     }
 
     return false;
+  }
+
+  Future follow(String userId) async {
+    if (!auth.isAuthenticated) {
+      throw Exception("user/unauthenticated");
+    }
+
+    try {
+      await functions.httpsCallable("follow").call({
+        "userIdFrom": auth.userModel.id,
+        "userIdTo": userId,
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future unfollow(String userId) async {
+    if (!auth.isAuthenticated) {
+      throw Exception("user/unauthenticated");
+    }
+
+    try {
+      await functions.httpsCallable("unfollow").call({
+        "userIdFrom": auth.userModel.id,
+        "userIdTo": userId,
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 }

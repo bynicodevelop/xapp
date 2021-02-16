@@ -10,6 +10,7 @@ class UserModel {
   static const String SLUG = 'slug';
   static const String FOLLOWERS = 'followers';
   static const String FOLLOWINGS = 'followings';
+  static const String LIST_FOLLOWINGS = 'listFollowings';
 
   final String id;
   final String email;
@@ -19,6 +20,7 @@ class UserModel {
   final String slug;
   final int followers;
   final int followings;
+  final Map<String, dynamic> listFollowings;
 
   const UserModel({
     this.id,
@@ -29,6 +31,7 @@ class UserModel {
     this.slug,
     this.followers,
     this.followings,
+    this.listFollowings,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
@@ -47,6 +50,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
     slug: json[UserModel.SLUG] as String,
     followers: json[UserModel.FOLLOWERS] as int,
     followings: json[UserModel.FOLLOWINGS] as int,
+    listFollowings: json[UserModel.LIST_FOLLOWINGS] as Map<String, dynamic>,
   );
 }
 
@@ -59,4 +63,5 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       UserModel.SLUG: instance.slug,
       UserModel.FOLLOWERS: instance.followers,
       UserModel.FOLLOWINGS: instance.followings,
+      UserModel.LIST_FOLLOWINGS: instance.listFollowings,
     };

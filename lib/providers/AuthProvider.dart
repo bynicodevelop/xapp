@@ -4,6 +4,7 @@ import 'package:xapp/models/UserModel.dart';
 class AuthProvider {
   final FirebaseAuth auth;
 
+  UserModel _userModel;
   bool _connected = false;
 
   AuthProvider({
@@ -11,6 +12,7 @@ class AuthProvider {
   });
 
   bool get isAuthenticated => _connected;
+  UserModel get userModel => _userModel;
 
   Stream<UserModel> get user {
     return auth.authStateChanges().asyncMap((user) async {
@@ -20,7 +22,12 @@ class AuthProvider {
 
       _connected = true;
 
-      return UserModel(id: user.uid, email: user.email);
+      _userModel = UserModel(
+        id: user.uid,
+        email: user.email,
+      );
+
+      return _userModel;
     });
   }
 

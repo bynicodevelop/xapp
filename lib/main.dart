@@ -72,6 +72,7 @@ class App extends StatelessWidget {
             Provider<FunctionProvider>(
               create: (_) => FunctionProvider(
                 functions: functions,
+                auth: authProvider,
               ),
             )
           ],
@@ -99,7 +100,7 @@ class App extends StatelessWidget {
             ),
             home: Builder(
               builder: (context) => StreamBuilder(
-                stream: Provider.of<AuthProvider>(context).user,
+                stream: Provider.of<FirestoreProvider>(context).user,
                 builder: (context, snapshotUser) {
                   if (snapshotUser.connectionState != ConnectionState.active) {
                     return Loading();

@@ -17,6 +17,15 @@ class FirestoreProvider {
   final List<PostModel> _posts = List<PostModel>();
   PostModel _currentPost;
 
+  final StreamController<UserModel> _currentUserProfile =
+      StreamController<UserModel>.broadcast();
+
+  final StreamController<UserModel> _currentUser =
+      StreamController<UserModel>.broadcast();
+
+  final StreamController<bool> isFollowedontroller =
+      StreamController<bool>.broadcast();
+
   final StreamController<List<PostModel>> _postsStream =
       StreamController<List<PostModel>>.broadcast();
 
@@ -34,13 +43,70 @@ class FirestoreProvider {
 
   set currentPost(value) => _currentPost = value;
 
-  Stream<List<PostModel>> get posts => _postsStream.stream;
+  List<PostModel> get profilPosts => _profilePostModels;
 
-  get profilPosts => _profilePostModels;
+  Stream<List<PostModel>> get posts => _postsStream.stream;
 
   cleanProfilePosts() => _profilePostModels.clear();
 
-  /// Permet de récupérer un post pour le feed
+  // Retourne le profile d'un utilisateur connecté sous forme de stream
+  Stream<UserModel> get user {
+    authProvider.user.listen((UserModel user) {
+      firestore.collection('users').doc(user.id).snapshots().listen((userDoc) {
+        firestore
+            .collection('followings')
+            .doc(user.id)
+            .snapshots()
+            .listen((followingsDoc) {
+          UserModel userModel = UserModel.fromJson({
+            ...userDoc.data(),
+            ...{
+              UserModel.ID: userDoc.id,
+              UserModel.LIST_FOLLOWINGS: followingsDoc.data(),
+            }
+          });
+
+          _currentUser.add(userModel);
+        });
+      });
+    });
+
+    return _currentUser.stream;
+  }
+
+  // Retourne le public d'un utilisateur sous forme de stream
+  Stream<UserModel> getProfile(String userId) {
+    Stream<DocumentSnapshot> documentSnapshot =
+        firestore.collection('users').doc(userId).snapshots();
+
+    documentSnapshot.listen((doc) async {
+      print(doc.data());
+
+      _currentUserProfile.add(
+        UserModel.fromJson({
+          ...doc.data(),
+          ...{UserModel.ID: doc.id},
+        }),
+      );
+    });
+
+    return _currentUserProfile.stream;
+  }
+
+  Stream<bool> isFollowed(String profileUserId) {
+    user.listen((UserModel user) {
+      final dynamic found = user.listFollowings.entries.firstWhere(
+        (entry) => (entry.value as DocumentReference).id == profileUserId,
+        orElse: () => null,
+      );
+
+      isFollowedontroller.add(found != null);
+    });
+
+    return isFollowedontroller.stream;
+  }
+
+  // Permet de récupérer un post pour le feed
   getPost({
     int limit = 2,
     PostModel post,
@@ -131,6 +197,7 @@ class FirestoreProvider {
     return Future.value(INVITED.VALID);
   }
 
+  // Permet de charger en lazy loading les posts d'un utilisateur
   Future getProfilePosts(String userId) async {
     if (_profilePostModels.length >= Config.maxPostWhenUserIsNotAuthenticated &&
         !authProvider.isAuthenticated) return;

@@ -7,8 +7,10 @@ import 'package:xapp/models/PostModel.dart';
 import 'package:xapp/models/UserModel.dart';
 import 'package:xapp/providers/AuthProvider.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
+import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Booking.dart';
 import 'package:xapp/screens/auth/Login.dart';
+import 'package:xapp/widget/FollowButton.dart';
 import 'package:xapp/widget/Stat.dart';
 import 'package:xapp/widget/form/SecondaryButton.dart';
 
@@ -27,13 +29,13 @@ class _PublicProfileState extends State<PublicProfile> {
   final ScrollController _scrollController = new ScrollController();
   AuthProvider _authProvider;
   FirestoreProvider _firestoreProvider;
+  FunctionProvider _functionProvider;
 
   bool _loading = true;
   bool _reload = false;
 
   UserModel _user;
-
-  // = UserModel(
+  //  = UserModel(
   //   id: "7Bu8TQsvGTSvIUnGKsXMXI3qvgmx",
   //   displayName: "Jess e",
   //   slug: "jess-e",
@@ -47,6 +49,8 @@ class _PublicProfileState extends State<PublicProfile> {
   @override
   void initState() {
     super.initState();
+
+    // Permet de charger les donner lorsque le scroll est au plus bas
     _scrollController.addListener(() {
       double maxScroll = _scrollController.position.maxScrollExtent;
       double currentScroll = _scrollController.position.pixels;
@@ -62,10 +66,17 @@ class _PublicProfileState extends State<PublicProfile> {
       }
     });
 
+    // Chargement des providers
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
-
+    _functionProvider = Provider.of<FunctionProvider>(context, listen: false);
     _firestoreProvider = Provider.of<FirestoreProvider>(context, listen: false);
+
+    // Chargement des données de l'utilisateur dès que la vue s'affiche
     setState(() => _user = _firestoreProvider.currentPost.user);
+
+    _firestoreProvider
+        .getProfile(_user.id)
+        .listen((user) => setState(() => _user = user));
 
     _firestoreProvider.getProfilePosts(_user.id).then(
           (_) => setState(() => _loading = false),
@@ -140,20 +151,10 @@ class _PublicProfileState extends State<PublicProfile> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 40.0,
-                      left: 50.0,
-                      right: 50.0,
-                    ),
-                    child: SizedBox(
-                      height: 45.0,
-                      width: MediaQuery.of(context).size.width,
-                      child: RaisedButton(
-                        onPressed: () => print('Follow'),
-                        child: Text('Follow'.toUpperCase()),
-                      ),
-                    ),
+                  FollowButton(
+                    functionProvider: _functionProvider,
+                    firestoreProvider: _firestoreProvider,
+                    profileUserId: _user.id,
                   ),
                 ],
               ),
