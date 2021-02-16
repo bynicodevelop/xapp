@@ -67,8 +67,23 @@ class FunctionProvider {
 
     try {
       await functions.httpsCallable("unfollow").call({
+        // TODO: pourquoi ne pas prendre l'ID coté serveur (API)
         "userIdFrom": auth.userModel.id,
         "userIdTo": userId,
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future like(String postId) async {
+    if (!auth.isAuthenticated) {
+      throw Exception("user/unauthenticated");
+    }
+
+    try {
+      await functions.httpsCallable("like").call({
+        'postId': postId,
       });
     } catch (e) {
       print(e);

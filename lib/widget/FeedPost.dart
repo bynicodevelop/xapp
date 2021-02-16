@@ -6,6 +6,7 @@ import 'package:xapp/providers/AuthProvider.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/LandingPage.dart';
+import 'package:xapp/screens/auth/Login.dart';
 import 'package:xapp/widget/LikeButton.dart';
 
 class FeedPost extends StatelessWidget {
@@ -53,7 +54,18 @@ class FeedPost extends StatelessWidget {
                 ),
               ),
               LikeButton(
-                onTap: () => print('liked'),
+                onTap: () async {
+                  try {
+                    await functionProvider.like(post.id);
+                  } catch (e) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Login(),
+                      ),
+                    );
+                  }
+                },
                 hasLiked: false,
                 likes: post.likes,
               ),

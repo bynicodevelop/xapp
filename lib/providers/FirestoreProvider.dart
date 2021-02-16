@@ -23,7 +23,7 @@ class FirestoreProvider {
   final StreamController<UserModel> _currentUser =
       StreamController<UserModel>.broadcast();
 
-  final StreamController<bool> isFollowedontroller =
+  final StreamController<bool> isFollowedController =
       StreamController<bool>.broadcast();
 
   final StreamController<List<PostModel>> _postsStream =
@@ -52,6 +52,11 @@ class FirestoreProvider {
   // Retourne le profile d'un utilisateur connecté sous forme de stream
   Stream<UserModel> get user {
     authProvider.user.listen((UserModel user) {
+      if (user == null) {
+        _currentUser.add(null);
+        return;
+      }
+
       firestore.collection('users').doc(user.id).snapshots().listen((userDoc) {
         firestore
             .collection('followings')
@@ -95,15 +100,20 @@ class FirestoreProvider {
 
   Stream<bool> isFollowed(String profileUserId) {
     user.listen((UserModel user) {
+      if (user == null) {
+        isFollowedController.add(false);
+        return;
+      }
+
       final dynamic found = user.listFollowings.entries.firstWhere(
         (entry) => (entry.value as DocumentReference).id == profileUserId,
         orElse: () => null,
       );
 
-      isFollowedontroller.add(found != null);
+      isFollowedController.add(found != null);
     });
 
-    return isFollowedontroller.stream;
+    return isFollowedController.stream;
   }
 
   // Permet de récupérer un post pour le feed

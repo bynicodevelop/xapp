@@ -27,6 +27,7 @@ class App extends StatelessWidget {
     return FutureBuilder(
       future: _initialization,
       builder: (context, snapshot) {
+        print('Initialize Firebase connection');
         if (snapshot.connectionState != ConnectionState.done) {
           return Loading();
         }
@@ -102,6 +103,7 @@ class App extends StatelessWidget {
               builder: (context) => StreamBuilder(
                 stream: Provider.of<FirestoreProvider>(context).user,
                 builder: (context, snapshotUser) {
+                  print('Initialize user connection');
                   if (snapshotUser.connectionState != ConnectionState.active) {
                     return Loading();
                   }
