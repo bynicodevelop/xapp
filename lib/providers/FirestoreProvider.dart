@@ -117,10 +117,10 @@ class FirestoreProvider {
   }
 
   // Permet de récupérer un post pour le feed
-  getPost({
+  Stream<List<PostModel>> getPost({
     int limit = 2,
     PostModel post,
-  }) async {
+  }) {
     Query query = this
         .firestore
         .collection('posts')
@@ -137,11 +137,13 @@ class FirestoreProvider {
     }
 
     query.snapshots().listen(
-          (doc) => doc.docs.forEach(
+          (doc) => doc.docChanges.forEach(
             (post) {
-              final dynamic data = post.data();
+              final dynamic data = post.doc.data();
 
-              print('PostModel Id: ${post.id}');
+              print(post.type == DocumentChangeType.modified);
+
+              print('PostModel Id: ${post.doc.id}');
 
               // TODO: Voir s'il n'es pas possible de stocker les requêtes
               data['userRef'].get().then((user) {
@@ -150,22 +152,36 @@ class FirestoreProvider {
                   ...{UserModel.ID: user.id}
                 });
 
-                _posts.add(
-                  PostModel.fromJson({
+                if (post.type == DocumentChangeType.added) {
+                  _posts.add(
+                    PostModel.fromJson({
+                      ...data,
+                      ...{
+                        PostModel.ID: post.doc.id,
+                        PostModel.DOCUMENT: post.doc,
+                        PostModel.USER: userModel,
+                      }
+                    }),
+                  );
+                } else if (post.type == DocumentChangeType.modified) {
+                  int index = _posts.indexWhere((p) => p.id == post.doc.id);
+                  _posts[index] = PostModel.fromJson({
                     ...data,
                     ...{
-                      PostModel.ID: post.id,
-                      PostModel.DOCUMENT: post,
+                      PostModel.ID: post.doc.id,
+                      PostModel.DOCUMENT: post.doc,
                       PostModel.USER: userModel,
                     }
-                  }),
-                );
+                  });
+                }
 
                 _postsStream.add(_posts);
               });
             },
           ),
         );
+
+    return _postsStream.stream;
   }
 
   /// Permet de vérifier que le slug n'est pas déjà utilisé
