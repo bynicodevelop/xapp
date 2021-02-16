@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:xapp/Home.dart';
 import 'package:xapp/providers/AuthProvider.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
@@ -116,6 +117,14 @@ class _LoginState extends State<Login> {
                                   await _authProvider.login(
                                     _emailController.text,
                                     _passwordController.text,
+                                  );
+
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Home(),
+                                    ),
+                                    (_) => false,
                                   );
                                 } catch (e) {
                                   String message =
