@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:xapp/models/PostModel.dart';
 import 'package:xapp/providers/AuthProvider.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
@@ -54,13 +55,29 @@ class _FeedPostState extends State<FeedPost> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Image(
+        Image.network(
+          widget.post.imageURL,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+
+            return Center(
+              child: SpinKitThreeBounce(
+                color: Colors.white,
+                size: 15.0,
+              ),
+            );
+          },
           fit: BoxFit.cover,
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          alignment: Alignment.center,
-          image: NetworkImage(widget.post.imageURL),
         ),
+        // Image(
+        //   fit: BoxFit.cover,
+        //   height: MediaQuery.of(context).size.height,
+        //   width: MediaQuery.of(context).size.width,
+        //   alignment: Alignment.center,
+        //   image: NetworkImage(widget.post.imageURL),
+        // ),
         Positioned(
           bottom: 50.0,
           right: 30.0,

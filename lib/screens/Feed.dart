@@ -41,12 +41,13 @@ class _FeedState extends State<Feed> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       body: StreamBuilder(
         stream: _firestoreProvider.posts,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.active) {
             return SpinKitThreeBounce(
-              color: Colors.black,
+              color: Colors.white,
               size: 15.0,
             );
           }

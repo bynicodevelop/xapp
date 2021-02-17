@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:xapp/models/UserModel.dart';
-import 'package:xapp/providers/AuthProvider.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Login.dart';

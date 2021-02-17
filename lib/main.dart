@@ -11,7 +11,7 @@ import 'package:xapp/providers/AuthProvider.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/widget/Error.dart';
-import 'package:xapp/widget/Loading.dart';
+import 'package:xapp/widget/Splashscreen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,9 +27,8 @@ class App extends StatelessWidget {
     return FutureBuilder(
       future: _initialization,
       builder: (context, snapshot) {
-        print('Initialize Firebase connection');
         if (snapshot.connectionState != ConnectionState.done) {
-          return Loading();
+          return Splashscreen();
         }
 
         if (snapshot.hasError) {
@@ -105,7 +104,7 @@ class App extends StatelessWidget {
                 builder: (context, snapshotUser) {
                   print('Initialize user connection');
                   if (snapshotUser.connectionState != ConnectionState.active) {
-                    return Loading();
+                    return Splashscreen();
                   }
 
                   if (snapshotUser.hasError) {
