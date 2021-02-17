@@ -74,9 +74,11 @@ class _PublicProfileState extends State<PublicProfile> {
     // Chargement des données de l'utilisateur dès que la vue s'affiche
     setState(() => _user = _firestoreProvider.currentPost.user);
 
-    _firestoreProvider
-        .getProfile(_user.id)
-        .listen((user) => setState(() => _user = user));
+    _firestoreProvider.getProfile(_user.id).listen((user) {
+      if (mounted) {
+        setState(() => _user = user);
+      }
+    });
 
     _firestoreProvider.getProfilePosts(_user.id).then(
           (_) => setState(() => _loading = false),

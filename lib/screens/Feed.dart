@@ -7,7 +7,12 @@ import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/widget/FeedPost.dart';
 
 class Feed extends StatefulWidget {
-  const Feed({Key key}) : super(key: key);
+  final Function goToProfile;
+
+  const Feed({
+    Key key,
+    this.goToProfile,
+  }) : super(key: key);
 
   @override
   _FeedState createState() => _FeedState();
@@ -57,6 +62,10 @@ class _FeedState extends State<Feed> {
               .entries
               .map<Widget>(
                 (entry) => FeedPost(
+                  onProfilePressed: () {
+                    widget.goToProfile();
+                    _firestoreProvider.currentPost = entry.value;
+                  },
                   authProvider: _authProvider,
                   firestoreProvider: _firestoreProvider,
                   functionProvider: _functionProvider,

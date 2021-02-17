@@ -12,6 +12,7 @@ import 'package:xapp/screens/auth/Login.dart';
 import 'package:xapp/widget/LikeButton.dart';
 
 class FeedPost extends StatefulWidget {
+  final Function onProfilePressed;
   final AuthProvider authProvider;
   final FirestoreProvider firestoreProvider;
   final FunctionProvider functionProvider;
@@ -20,6 +21,7 @@ class FeedPost extends StatefulWidget {
 
   const FeedPost({
     Key key,
+    this.onProfilePressed,
     this.authProvider,
     this.firestoreProvider,
     this.functionProvider,
@@ -98,7 +100,7 @@ class _FeedPostState extends State<FeedPost> {
                     bottom: 20.0,
                   ),
                   child: GestureDetector(
-                      onTap: () => print('got to profile'),
+                      onTap: widget.onProfilePressed,
                       child: SizedBox(
                         width: 60.0,
                         height: 60.0,

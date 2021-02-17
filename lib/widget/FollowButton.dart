@@ -30,8 +30,9 @@ class _FollowButtonState extends State<FollowButton> {
     widget.firestoreProvider
         .isFollowed(widget.profileUserId)
         .listen((isFollowed) {
-      print(isFollowed);
-      setState(() => _isFollowed = isFollowed);
+      if (mounted) {
+        setState(() => _isFollowed = isFollowed);
+      }
     });
   }
 
