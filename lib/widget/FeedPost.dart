@@ -33,6 +33,7 @@ class FeedPost extends StatefulWidget {
 
 class _FeedPostState extends State<FeedPost> {
   bool _isLiked = false;
+  bool _isVisible = false;
 
   @override
   void initState() {
@@ -54,64 +55,100 @@ class _FeedPostState extends State<FeedPost> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.center,
       children: [
+        Positioned(
+          child: SpinKitThreeBounce(
+            color: Colors.white,
+            size: 15.0,
+          ),
+        ),
         Image.network(
           widget.post.imageURL,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                setState(() => _isVisible = frame != null);
+              }
+            });
 
-            return Center(
-              child: SpinKitThreeBounce(
-                color: Colors.white,
-                size: 15.0,
-              ),
-            );
+            return wasSynchronouslyLoaded
+                ? child
+                : AnimatedOpacity(
+                    child: child,
+                    opacity: frame == null ? 0 : 1,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
           },
           fit: BoxFit.cover,
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
         ),
-        // Image(
-        //   fit: BoxFit.cover,
-        //   height: MediaQuery.of(context).size.height,
-        //   width: MediaQuery.of(context).size.width,
-        //   alignment: Alignment.center,
-        //   image: NetworkImage(widget.post.imageURL),
-        // ),
         Positioned(
           bottom: 50.0,
           right: 30.0,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 20.0,
-                ),
-                child: GestureDetector(
-                  onTap: () => print('got to profile'),
-                  child: CircleAvatar(
-                    radius: 28.0,
-                    backgroundImage: NetworkImage(widget.post.user.photoURL),
+          child: AnimatedOpacity(
+            opacity: _isVisible ? 1 : 0,
+            duration: Duration(milliseconds: 800),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 20.0,
                   ),
-                ),
-              ),
-              LikeButton(
-                onTap: () async {
-                  try {
-                    await widget.functionProvider.like(widget.post.id);
-                  } catch (e) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Login(),
+                  child: GestureDetector(
+                      onTap: () => print('got to profile'),
+                      child: SizedBox(
+                        width: 60.0,
+                        height: 60.0,
+                        child: ClipOval(
+                          child: Image.network(
+                            widget.post.user.photoURL,
+                            frameBuilder: (context, child, frame,
+                                wasSynchronouslyLoaded) {
+                              return wasSynchronouslyLoaded
+                                  ? child
+                                  : AnimatedOpacity(
+                                      child: child,
+                                      opacity: frame == null ? 0 : 1,
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.easeOut,
+                                    );
+                            },
+                            fit: BoxFit.cover,
+                            height: MediaQuery.of(context).size.height,
+                            width: MediaQuery.of(context).size.width,
+                          ),
+                        ),
+                      )
+
+                      // CircleAvatar(
+                      //   backgroundColor: Theme.of(context).primaryColor,
+                      //   radius: 28.0,
+                      //   backgroundImage: NetworkImage(widget.post.user.photoURL),
+                      // ),
                       ),
-                    );
-                  }
-                },
-                hasLiked: _isLiked,
-                likes: widget.post.likes,
-              ),
-            ],
+                ),
+                LikeButton(
+                  onTap: () async {
+                    try {
+                      await widget.functionProvider.like(widget.post.id);
+                    } catch (e) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Login(),
+                        ),
+                      );
+                    }
+                  },
+                  hasLiked: _isLiked,
+                  likes: widget.post.likes,
+                ),
+              ],
+            ),
           ),
         ),
         Visibility(

@@ -19,16 +19,26 @@ void main() {
   runApp(App());
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
+  bool _loading = true;
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: _initialization,
       builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return Splashscreen();
+        if (snapshot.connectionState != ConnectionState.done || _loading) {
+          return Splashscreen(
+            isAnimate: true,
+            onEndAnimation: () => setState(() => _loading = false),
+          );
         }
 
         if (snapshot.hasError) {

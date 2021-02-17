@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:xapp/Config.dart';
 import 'package:xapp/providers/AuthProvider.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/widget/FeedPost.dart';
 
@@ -46,10 +45,7 @@ class _FeedState extends State<Feed> {
         stream: _firestoreProvider.posts,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.active) {
-            return SpinKitThreeBounce(
-              color: Colors.white,
-              size: 15.0,
-            );
+            return SizedBox.shrink();
           }
 
           if (_currentIndex == 0) {

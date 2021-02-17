@@ -39,13 +39,15 @@ class _LikeButtonState extends State<LikeButton> {
             },
             child: _loading
                 ? SpinKitPumpingHeart(
-                    color: Color(0xFFC2185B),
+                    color: Theme.of(context).primaryColor,
                     size: 60.0,
                   )
                 : Icon(
                     widget.hasLiked ? Icons.favorite : Icons.favorite_outline,
                     size: 60,
-                    color: !widget.hasLiked ? Colors.white : Color(0xFFC2185B),
+                    color: !widget.hasLiked
+                        ? Colors.white
+                        : Theme.of(context).primaryColor,
                   ),
           ),
         ),
