@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()
@@ -11,6 +12,7 @@ class UserModel {
   static const String FOLLOWERS = 'followers';
   static const String FOLLOWINGS = 'followings';
   static const String LIST_FOLLOWINGS = 'listFollowings';
+  static const String LIKES = 'likes';
 
   final String id;
   final String email;
@@ -21,6 +23,7 @@ class UserModel {
   final int followers;
   final int followings;
   final Map<String, dynamic> listFollowings;
+  final List<DocumentReference> likes;
 
   const UserModel({
     this.id,
@@ -32,6 +35,7 @@ class UserModel {
     this.followers,
     this.followings,
     this.listFollowings,
+    this.likes,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
@@ -51,6 +55,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
     followers: json[UserModel.FOLLOWERS] as int,
     followings: json[UserModel.FOLLOWINGS] as int,
     listFollowings: json[UserModel.LIST_FOLLOWINGS] as Map<String, dynamic>,
+    likes: json[UserModel.LIKES] as List<DocumentReference>,
   );
 }
 
@@ -64,4 +69,5 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       UserModel.FOLLOWERS: instance.followers,
       UserModel.FOLLOWINGS: instance.followings,
       UserModel.LIST_FOLLOWINGS: instance.listFollowings,
+      UserModel.LIKES: instance.likes,
     };

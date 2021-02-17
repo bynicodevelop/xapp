@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:xapp/models/PostModel.dart';
 import 'package:xapp/providers/AuthProvider.dart';
@@ -9,7 +10,7 @@ import 'package:xapp/screens/LandingPage.dart';
 import 'package:xapp/screens/auth/Login.dart';
 import 'package:xapp/widget/LikeButton.dart';
 
-class FeedPost extends StatelessWidget {
+class FeedPost extends StatefulWidget {
   final AuthProvider authProvider;
   final FirestoreProvider firestoreProvider;
   final FunctionProvider functionProvider;
@@ -26,6 +27,30 @@ class FeedPost extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _FeedPostState createState() => _FeedPostState();
+}
+
+class _FeedPostState extends State<FeedPost> {
+  bool _isLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    widget.firestoreProvider.user.listen((user) {
+      if (user == null) return;
+
+      dynamic result = user.likes.firstWhere(
+          (DocumentReference like) => like.id == widget.post.id,
+          orElse: () => null);
+
+      if (mounted) {
+        setState(() => _isLiked = result != null);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
@@ -34,7 +59,7 @@ class FeedPost extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           alignment: Alignment.center,
-          image: NetworkImage(post.imageURL),
+          image: NetworkImage(widget.post.imageURL),
         ),
         Positioned(
           bottom: 50.0,
@@ -49,14 +74,14 @@ class FeedPost extends StatelessWidget {
                   onTap: () => print('got to profile'),
                   child: CircleAvatar(
                     radius: 28.0,
-                    backgroundImage: NetworkImage(post.user.photoURL),
+                    backgroundImage: NetworkImage(widget.post.user.photoURL),
                   ),
                 ),
               ),
               LikeButton(
                 onTap: () async {
                   try {
-                    await functionProvider.like(post.id);
+                    await widget.functionProvider.like(widget.post.id);
                   } catch (e) {
                     Navigator.push(
                       context,
@@ -66,14 +91,14 @@ class FeedPost extends StatelessWidget {
                     );
                   }
                 },
-                hasLiked: false,
-                likes: post.likes,
+                hasLiked: _isLiked,
+                likes: widget.post.likes,
               ),
             ],
           ),
         ),
         Visibility(
-          visible: isLast && !authProvider.isAuthenticated,
+          visible: widget.isLast && !widget.authProvider.isAuthenticated,
           child: Positioned(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -90,11 +115,11 @@ class FeedPost extends StatelessWidget {
           ),
         ),
         Visibility(
-          visible: isLast && !authProvider.isAuthenticated,
+          visible: widget.isLast && !widget.authProvider.isAuthenticated,
           child: Positioned(
             child: LandingPage(
-              firestoreProvider: firestoreProvider,
-              functionProvider: functionProvider,
+              firestoreProvider: widget.firestoreProvider,
+              functionProvider: widget.functionProvider,
             ),
           ),
         )

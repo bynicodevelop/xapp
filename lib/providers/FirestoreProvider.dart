@@ -58,20 +58,27 @@ class FirestoreProvider {
       }
 
       firestore.collection('users').doc(user.id).snapshots().listen((userDoc) {
-        firestore
-            .collection('followings')
-            .doc(user.id)
-            .snapshots()
-            .listen((followingsDoc) {
-          UserModel userModel = UserModel.fromJson({
-            ...userDoc.data(),
-            ...{
-              UserModel.ID: userDoc.id,
-              UserModel.LIST_FOLLOWINGS: followingsDoc.data(),
-            }
-          });
+        userDoc.reference.collection('likes').snapshots().listen((likesDoc) {
+          firestore
+              .collection('followings')
+              .doc(user.id)
+              .snapshots()
+              .listen((followingsDoc) {
+            UserModel userModel = UserModel.fromJson({
+              ...userDoc.data(),
+              ...{
+                UserModel.ID: userDoc.id,
+                UserModel.LIST_FOLLOWINGS: followingsDoc.data(),
+                UserModel.LIKES: likesDoc.docs
+                    .map((doc) => doc.data()['postRef'] as DocumentReference)
+                    .toList()
+              }
+            });
 
-          _currentUser.add(userModel);
+            print(userModel.toJson());
+
+            _currentUser.add(userModel);
+          });
         });
       });
     });
