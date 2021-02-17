@@ -96,228 +96,479 @@ class _PublicProfileState extends State<PublicProfile> {
     return WillPopScope(
       onWillPop: () => widget.onBack(),
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: SingleChildScrollView(
+        body: NestedScrollView(
           controller: _scrollController,
-          padding: const EdgeInsets.only(
-            bottom: 2.0,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          floatHeaderSlivers: true,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverAppBar(
+                title: Row(
+                  children: [
+                    IconButton(
+                      onPressed: widget.onBack,
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                      ),
+                    )
+                  ],
+                ),
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                floating: true,
+                // forceElevated: innerBoxIsScrolled,
+              ),
+            ];
+          },
+          body: ListView(
+            physics: BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(0),
             children: [
               Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Hero(
-                    tag: _user.id,
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(_user.photoURL),
-                      radius: 70,
-                    ),
-                  ),
-                  Text(
-                    _user.displayName,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                    ),
-                    child: Text(
-                      (_user.status ?? ''),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyText2,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 20.0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Stat(
-                          label: 'Followers',
-                          number: _user.followers,
-                          align: Stat.LEFT,
+                  Column(
+                    children: [
+                      Hero(
+                        tag: _user.id,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(_user.photoURL),
+                          radius: 70,
                         ),
-                        Stat(
-                          label: 'Followings',
-                          number: _user.followings,
-                          align: Stat.RIGHT,
+                      ),
+                      Text(
+                        _user.displayName,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headline3,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0,
                         ),
-                      ],
-                    ),
-                  ),
-                  FollowButton(
-                    functionProvider: _functionProvider,
-                    firestoreProvider: _firestoreProvider,
-                    profileUserId: _user.id,
-                  ),
-                ],
-              ),
-              Stack(
-                children: [
-                  Visibility(
-                    visible: _loading,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 70.0,
+                        child: Text(
+                          (_user.status ?? ''),
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
                       ),
-                      child: SpinKitThreeBounce(
-                        color: Colors.black,
-                        size: 15.0,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20.0,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Stat(
+                              label: 'Followers',
+                              number: _user.followers,
+                              align: Stat.LEFT,
+                            ),
+                            Stat(
+                              label: 'Followings',
+                              number: _user.followings,
+                              align: Stat.RIGHT,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                      FollowButton(
+                        functionProvider: _functionProvider,
+                        firestoreProvider: _firestoreProvider,
+                        profileUserId: _user.id,
+                      ),
+                    ],
                   ),
-                  Visibility(
-                    visible: !_loading,
-                    child: GridView(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 2,
-                        childAspectRatio: .7,
+                  Stack(
+                    children: [
+                      Visibility(
+                        visible: _loading,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 70.0,
+                          ),
+                          child: SpinKitThreeBounce(
+                            color: Colors.black,
+                            size: 15.0,
+                          ),
+                        ),
                       ),
-                      children: _firestoreProvider.profilPosts
-                          .map<Widget>(
-                            (PostModel post) => Builder(
-                              builder: (context) {
-                                final width = MediaQuery.of(context).size.width;
-                                final height =
-                                    MediaQuery.of(context).size.height;
+                      Visibility(
+                        visible: !_loading,
+                        child: GridView(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 2,
+                            mainAxisSpacing: 2,
+                            childAspectRatio: .7,
+                          ),
+                          children: _firestoreProvider.profilPosts
+                              .map<Widget>(
+                                (PostModel post) => Builder(
+                                  builder: (context) {
+                                    final width =
+                                        MediaQuery.of(context).size.width;
+                                    final height =
+                                        MediaQuery.of(context).size.height;
 
-                                return _authProvider.isAuthenticated
-                                    ? Container(
-                                        child: Image(
-                                          width: width,
-                                          height: height,
-                                          image: NetworkImage(post.imageURL),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : Container(
-                                        constraints: BoxConstraints.expand(),
-                                        child: Stack(
-                                          children: [
-                                            Image(
+                                    return _authProvider.isAuthenticated
+                                        ? Container(
+                                            child: Image(
                                               width: width,
                                               height: height,
                                               image:
                                                   NetworkImage(post.imageURL),
                                               fit: BoxFit.cover,
                                             ),
-                                            Positioned(
-                                              width: width,
-                                              height: height,
-                                              child: BackdropFilter(
-                                                filter: ImageFilter.blur(
-                                                  sigmaX: 8.0,
-                                                  sigmaY: 8.0,
+                                          )
+                                        : Container(
+                                            constraints:
+                                                BoxConstraints.expand(),
+                                            child: Stack(
+                                              children: [
+                                                Image(
+                                                  width: width,
+                                                  height: height,
+                                                  image: NetworkImage(
+                                                      post.imageURL),
+                                                  fit: BoxFit.cover,
                                                 ),
-                                                child: Container(
-                                                  constraints:
-                                                      BoxConstraints.expand(),
-                                                  color: Colors.white
-                                                      .withOpacity(.4),
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      );
-                              },
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                  Visibility(
-                    visible: !_authProvider.isAuthenticated && !_loading,
-                    child: Positioned(
-                      top: 0,
-                      left: 0,
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 50.0,
-                          vertical: 50.0,
-                        ),
-                        color: Colors.black.withOpacity(.3),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: 15.0,
-                                ),
-                                child: Text(
-                                  "Pour accéder au contenu de ${_user.displayName}, veuillez vous connecter.",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2
-                                      .copyWith(
-                                        height: 1.4,
-                                        fontSize: 16.0,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 50.0,
-                                width: 200.0,
-                                child: SecondaryButton(
-                                  label: "Me connecter",
-                                  onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Login(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              MaterialButton(
-                                child: Text(
-                                  "Créer un compte",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2
-                                      .copyWith(
-                                        fontStyle: FontStyle.italic,
-                                        color: Colors.white,
-                                      ),
-                                ),
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Booking(
-                                        // firestoreProvider: firestoreProvider,
-                                        // functionProvider: functionProvider,
-                                        ),
-                                  ),
+                                                Positioned(
+                                                  width: width,
+                                                  height: height,
+                                                  child: BackdropFilter(
+                                                    filter: ImageFilter.blur(
+                                                      sigmaX: 8.0,
+                                                      sigmaY: 8.0,
+                                                    ),
+                                                    child: Container(
+                                                      constraints:
+                                                          BoxConstraints
+                                                              .expand(),
+                                                      color: Colors.white
+                                                          .withOpacity(.4),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                  },
                                 ),
                               )
-                            ],
+                              .toList(),
+                        ),
+                      ),
+                      Visibility(
+                        visible: !_authProvider.isAuthenticated && !_loading,
+                        child: Positioned(
+                          top: 0,
+                          left: 0,
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 50.0,
+                              vertical: 50.0,
+                            ),
+                            color: Colors.black.withOpacity(.3),
+                            child: Center(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 15.0,
+                                    ),
+                                    child: Text(
+                                      "Pour accéder au contenu de ${_user.displayName}, veuillez vous connecter.",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2
+                                          .copyWith(
+                                            height: 1.4,
+                                            fontSize: 16.0,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 50.0,
+                                    width: 200.0,
+                                    child: SecondaryButton(
+                                      label: "Me connecter",
+                                      onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Login(),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  MaterialButton(
+                                    child: Text(
+                                      "Créer un compte",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2
+                                          .copyWith(
+                                            fontStyle: FontStyle.italic,
+                                            color: Colors.white,
+                                          ),
+                                    ),
+                                    onPressed: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Booking(
+                                            // firestoreProvider: firestoreProvider,
+                                            // functionProvider: functionProvider,
+                                            ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
-              ),
+              )
             ],
           ),
         ),
       ),
     );
+
+    // Scaffold(
+    //   appBar: AppBar(
+    //     backgroundColor: Colors.transparent,
+    //     elevation: 0,
+    //   ),
+    //   body: SingleChildScrollView(
+    //     controller: _scrollController,
+    //     padding: const EdgeInsets.only(
+    //       bottom: 2.0,
+    //     ),
+    //     child:
+    // Column(
+    //       mainAxisAlignment: MainAxisAlignment.start,
+    //       crossAxisAlignment: CrossAxisAlignment.stretch,
+    //       children: [
+    //         Column(
+    //           children: [
+    //             Hero(
+    //               tag: _user.id,
+    //               child: CircleAvatar(
+    //                 backgroundImage: NetworkImage(_user.photoURL),
+    //                 radius: 70,
+    //               ),
+    //             ),
+    //             Text(
+    //               _user.displayName,
+    //               textAlign: TextAlign.center,
+    //               style: Theme.of(context).textTheme.headline3,
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.symmetric(
+    //                 horizontal: 20.0,
+    //               ),
+    //               child: Text(
+    //                 (_user.status ?? ''),
+    //                 textAlign: TextAlign.center,
+    //                 style: Theme.of(context).textTheme.bodyText2,
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.symmetric(
+    //                 vertical: 20.0,
+    //               ),
+    //               child: Row(
+    //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //                 children: [
+    //                   Stat(
+    //                     label: 'Followers',
+    //                     number: _user.followers,
+    //                     align: Stat.LEFT,
+    //                   ),
+    //                   Stat(
+    //                     label: 'Followings',
+    //                     number: _user.followings,
+    //                     align: Stat.RIGHT,
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             FollowButton(
+    //               functionProvider: _functionProvider,
+    //               firestoreProvider: _firestoreProvider,
+    //               profileUserId: _user.id,
+    //             ),
+    //           ],
+    //         ),
+    //         Stack(
+    //           children: [
+    //             Visibility(
+    //               visible: _loading,
+    //               child: Padding(
+    //                 padding: const EdgeInsets.symmetric(
+    //                   vertical: 70.0,
+    //                 ),
+    //                 child: SpinKitThreeBounce(
+    //                   color: Colors.black,
+    //                   size: 15.0,
+    //                 ),
+    //               ),
+    //             ),
+    //             Visibility(
+    //               visible: !_loading,
+    //               child: GridView(
+    //                 physics: NeverScrollableScrollPhysics(),
+    //                 shrinkWrap: true,
+    //                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    //                   crossAxisCount: 3,
+    //                   crossAxisSpacing: 2,
+    //                   mainAxisSpacing: 2,
+    //                   childAspectRatio: .7,
+    //                 ),
+    //                 children: _firestoreProvider.profilPosts
+    //                     .map<Widget>(
+    //                       (PostModel post) => Builder(
+    //                         builder: (context) {
+    //                           final width = MediaQuery.of(context).size.width;
+    //                           final height =
+    //                               MediaQuery.of(context).size.height;
+
+    //                           return _authProvider.isAuthenticated
+    //                               ? Container(
+    //                                   child: Image(
+    //                                     width: width,
+    //                                     height: height,
+    //                                     image: NetworkImage(post.imageURL),
+    //                                     fit: BoxFit.cover,
+    //                                   ),
+    //                                 )
+    //                               : Container(
+    //                                   constraints: BoxConstraints.expand(),
+    //                                   child: Stack(
+    //                                     children: [
+    //                                       Image(
+    //                                         width: width,
+    //                                         height: height,
+    //                                         image:
+    //                                             NetworkImage(post.imageURL),
+    //                                         fit: BoxFit.cover,
+    //                                       ),
+    //                                       Positioned(
+    //                                         width: width,
+    //                                         height: height,
+    //                                         child: BackdropFilter(
+    //                                           filter: ImageFilter.blur(
+    //                                             sigmaX: 8.0,
+    //                                             sigmaY: 8.0,
+    //                                           ),
+    //                                           child: Container(
+    //                                             constraints:
+    //                                                 BoxConstraints.expand(),
+    //                                             color: Colors.white
+    //                                                 .withOpacity(.4),
+    //                                           ),
+    //                                         ),
+    //                                       )
+    //                                     ],
+    //                                   ),
+    //                                 );
+    //                         },
+    //                       ),
+    //                     )
+    //                     .toList(),
+    //               ),
+    //             ),
+    //             Visibility(
+    //               visible: !_authProvider.isAuthenticated && !_loading,
+    //               child: Positioned(
+    //                 top: 0,
+    //                 left: 0,
+    //                 bottom: 0,
+    //                 right: 0,
+    //                 child: Container(
+    //                   padding: const EdgeInsets.symmetric(
+    //                     horizontal: 50.0,
+    //                     vertical: 50.0,
+    //                   ),
+    //                   color: Colors.black.withOpacity(.3),
+    //                   child: Center(
+    //                     child: Column(
+    //                       children: [
+    //                         Padding(
+    //                           padding: const EdgeInsets.only(
+    //                             bottom: 15.0,
+    //                           ),
+    //                           child: Text(
+    //                             "Pour accéder au contenu de ${_user.displayName}, veuillez vous connecter.",
+    //                             style: Theme.of(context)
+    //                                 .textTheme
+    //                                 .bodyText2
+    //                                 .copyWith(
+    //                                   height: 1.4,
+    //                                   fontSize: 16.0,
+    //                                   color: Colors.white,
+    //                                   fontWeight: FontWeight.bold,
+    //                                 ),
+    //                             textAlign: TextAlign.center,
+    //                           ),
+    //                         ),
+    //                         SizedBox(
+    //                           height: 50.0,
+    //                           width: 200.0,
+    //                           child: SecondaryButton(
+    //                             label: "Me connecter",
+    //                             onPressed: () => Navigator.push(
+    //                               context,
+    //                               MaterialPageRoute(
+    //                                 builder: (context) => Login(),
+    //                               ),
+    //                             ),
+    //                           ),
+    //                         ),
+    //                         MaterialButton(
+    //                           child: Text(
+    //                             "Créer un compte",
+    //                             style: Theme.of(context)
+    //                                 .textTheme
+    //                                 .bodyText2
+    //                                 .copyWith(
+    //                                   fontStyle: FontStyle.italic,
+    //                                   color: Colors.white,
+    //                                 ),
+    //                           ),
+    //                           onPressed: () => Navigator.push(
+    //                             context,
+    //                             MaterialPageRoute(
+    //                               builder: (context) => Booking(
+    //                                   // firestoreProvider: firestoreProvider,
+    //                                   // functionProvider: functionProvider,
+    //                                   ),
+    //                             ),
+    //                           ),
+    //                         )
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // ),
+    // );
   }
 }
