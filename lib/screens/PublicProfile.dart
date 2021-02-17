@@ -12,6 +12,7 @@ import 'package:xapp/screens/auth/Booking.dart';
 import 'package:xapp/screens/auth/Login.dart';
 import 'package:xapp/widget/FollowButton.dart';
 import 'package:xapp/widget/Stat.dart';
+import 'package:xapp/widget/ThumbPost.dart';
 import 'package:xapp/widget/form/SecondaryButton.dart';
 
 class PublicProfile extends StatefulWidget {
@@ -206,59 +207,12 @@ class _PublicProfileState extends State<PublicProfile> {
                             childAspectRatio: .7,
                           ),
                           children: _firestoreProvider.profilPosts
-                              .map<Widget>(
-                                (PostModel post) => Builder(
-                                  builder: (context) {
-                                    final width =
-                                        MediaQuery.of(context).size.width;
-                                    final height =
-                                        MediaQuery.of(context).size.height;
-
-                                    return _authProvider.isAuthenticated
-                                        ? Container(
-                                            child: Image(
-                                              width: width,
-                                              height: height,
-                                              image:
-                                                  NetworkImage(post.imageURL),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          )
-                                        : Container(
-                                            constraints:
-                                                BoxConstraints.expand(),
-                                            child: Stack(
-                                              children: [
-                                                Image(
-                                                  width: width,
-                                                  height: height,
-                                                  image: NetworkImage(
-                                                      post.imageURL),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                                Positioned(
-                                                  width: width,
-                                                  height: height,
-                                                  child: BackdropFilter(
-                                                    filter: ImageFilter.blur(
-                                                      sigmaX: 8.0,
-                                                      sigmaY: 8.0,
-                                                    ),
-                                                    child: Container(
-                                                      constraints:
-                                                          BoxConstraints
-                                                              .expand(),
-                                                      color: Colors.white
-                                                          .withOpacity(.4),
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          );
-                                  },
-                                ),
-                              )
+                              .map<Widget>((PostModel post) => ThumbPost(
+                                    authProvider: _authProvider,
+                                    firestoreProvider: _firestoreProvider,
+                                    functionProvider: _functionProvider,
+                                    post: post,
+                                  ))
                               .toList(),
                         ),
                       ),

@@ -251,13 +251,22 @@ class FirestoreProvider {
 
     QuerySnapshot postQuerySnapshot = await postQuery.get();
 
-    postQuerySnapshot.docs.forEach((doc) {
+    // TODO: Peut-être que cette requête peut être appellée qu'une seule fois.
+    DocumentSnapshot userDocumentSnapshot = await documentReference.get();
+
+    postQuerySnapshot.docs.forEach((doc) async {
       _profilePostModels.add(
         PostModel.fromJson({
           ...doc.data(),
           ...{
             PostModel.ID: doc.id,
             PostModel.DOCUMENT: doc,
+            PostModel.USER: UserModel.fromJson({
+              ...userDocumentSnapshot.data(),
+              ...{
+                UserModel.ID: userDocumentSnapshot.id,
+              }
+            }),
           }
         }),
       );
