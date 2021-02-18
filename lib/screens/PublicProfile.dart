@@ -32,7 +32,7 @@ class _PublicProfileState extends State<PublicProfile> {
   FirestoreProvider _firestoreProvider;
   FunctionProvider _functionProvider;
 
-  bool _loading = true;
+  bool _loading = false;
   bool _reload = false;
 
   UserModel _user;
@@ -61,9 +61,7 @@ class _PublicProfileState extends State<PublicProfile> {
         print('load next posts...');
         setState(() => _reload = true);
 
-        _firestoreProvider.getProfilePosts(_user.id).then(
-              (_) => setState(() => _reload = false),
-            );
+        _firestoreProvider.getProfilePosts(_user.id);
       }
     });
 
@@ -81,9 +79,7 @@ class _PublicProfileState extends State<PublicProfile> {
       }
     });
 
-    _firestoreProvider.getProfilePosts(_user.id).then(
-          (_) => setState(() => _loading = false),
-        );
+    _firestoreProvider.getProfilePosts(_user.id);
   }
 
   @override
@@ -195,25 +191,40 @@ class _PublicProfileState extends State<PublicProfile> {
                       ),
                       Visibility(
                         visible: !_loading,
-                        child: GridView(
-                          padding: const EdgeInsets.all(0),
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 2,
-                            mainAxisSpacing: 2,
-                            childAspectRatio: .7,
-                          ),
-                          children: _firestoreProvider.profilPosts
-                              .map<Widget>((PostModel post) => ThumbPost(
-                                    authProvider: _authProvider,
-                                    firestoreProvider: _firestoreProvider,
-                                    functionProvider: _functionProvider,
-                                    post: post,
-                                  ))
-                              .toList(),
+                        child: StreamBuilder(
+                          stream: _firestoreProvider.profilPosts,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState !=
+                                ConnectionState.active) {
+                              return SpinKitThreeBounce(
+                                color: Colors.black,
+                                size: 15.0,
+                              );
+                            }
+
+                            return GridView(
+                              padding: const EdgeInsets.all(0),
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 2,
+                                mainAxisSpacing: 2,
+                                childAspectRatio: .7,
+                              ),
+                              children: snapshot.data
+                                  .map<Widget>(
+                                    (PostModel post) => ThumbPost(
+                                      authProvider: _authProvider,
+                                      firestoreProvider: _firestoreProvider,
+                                      functionProvider: _functionProvider,
+                                      post: post,
+                                    ),
+                                  )
+                                  .toList(),
+                            );
+                          },
                         ),
                       ),
                       Visibility(

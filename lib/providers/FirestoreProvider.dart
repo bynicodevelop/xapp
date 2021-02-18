@@ -15,6 +15,8 @@ enum INVITED {
 
 class FirestoreProvider {
   final List<PostModel> _posts = List<PostModel>();
+  final List<PostModel> _profilePostModels = List<PostModel>();
+
   PostModel _currentPost;
 
   final StreamController<UserModel> _currentUserProfile =
@@ -29,7 +31,8 @@ class FirestoreProvider {
   final StreamController<List<PostModel>> _postsStream =
       StreamController<List<PostModel>>.broadcast();
 
-  final List<PostModel> _profilePostModels = List<PostModel>();
+  final StreamController<List<PostModel>> _profilePostsStream =
+      StreamController<List<PostModel>>.broadcast();
 
   final FirebaseFirestore firestore;
   final AuthProvider authProvider;
@@ -43,11 +46,50 @@ class FirestoreProvider {
 
   set currentPost(value) => _currentPost = value;
 
-  List<PostModel> get profilPosts => _profilePostModels;
+  Stream<List<PostModel>> get profilPosts => _profilePostsStream.stream;
 
   Stream<List<PostModel>> get posts => _postsStream.stream;
 
   cleanProfilePosts() => _profilePostModels.clear();
+
+  PostModel _convertToPostModel(
+    DocumentSnapshot post,
+    DocumentSnapshot user,
+  ) {
+    return PostModel.fromJson({
+      ...post.data(),
+      ...{
+        PostModel.ID: post.id,
+        PostModel.DOCUMENT: post,
+        PostModel.USER: UserModel.fromJson({
+          ...user.data(),
+          ...{
+            UserModel.ID: user.id,
+          }
+        }),
+      }
+    });
+  }
+
+  UserModel _convertToUserModel(
+    DocumentSnapshot user, {
+    DocumentSnapshot followings,
+    QuerySnapshot likes,
+  }) {
+    return UserModel.fromJson({
+      ...user.data(),
+      ...{
+        UserModel.ID: user.id,
+        UserModel.LIST_FOLLOWINGS:
+            followings != null ? followings.data() : Map<String, dynamic>(),
+        UserModel.LIKES: likes != null
+            ? likes.docs
+                .map((doc) => doc.data()['postRef'] as DocumentReference)
+                .toList()
+            : List<DocumentReference>()
+      }
+    });
+  }
 
   // Retourne le profile d'un utilisateur connecté sous forme de stream
   Stream<UserModel> get user {
@@ -64,18 +106,11 @@ class FirestoreProvider {
               .doc(user.id)
               .snapshots()
               .listen((followingsDoc) {
-            UserModel userModel = UserModel.fromJson({
-              ...userDoc.data(),
-              ...{
-                UserModel.ID: userDoc.id,
-                UserModel.LIST_FOLLOWINGS: followingsDoc.data(),
-                UserModel.LIKES: likesDoc.docs
-                    .map((doc) => doc.data()['postRef'] as DocumentReference)
-                    .toList()
-              }
-            });
-
-            print(userModel.toJson());
+            UserModel userModel = _convertToUserModel(
+              userDoc,
+              followings: followingsDoc,
+              likes: likesDoc,
+            );
 
             _currentUser.add(userModel);
           });
@@ -94,12 +129,7 @@ class FirestoreProvider {
     documentSnapshot.listen((doc) async {
       print(doc.data());
 
-      _currentUserProfile.add(
-        UserModel.fromJson({
-          ...doc.data(),
-          ...{UserModel.ID: doc.id},
-        }),
-      );
+      _currentUserProfile.add(_convertToUserModel(doc));
     });
 
     return _currentUserProfile.stream;
@@ -121,73 +151,6 @@ class FirestoreProvider {
     });
 
     return isFollowedController.stream;
-  }
-
-  // Permet de récupérer un post pour le feed
-  Stream<List<PostModel>> getPost({
-    int limit = 2,
-    PostModel post,
-  }) {
-    Query query = this
-        .firestore
-        .collection('posts')
-        .orderBy(
-          'createdAt',
-          descending: true,
-        )
-        .limit(limit);
-
-    if (post != null) {
-      query = query.startAfterDocument(post.document);
-    } else {
-      _posts.clear();
-    }
-
-    query.snapshots().listen(
-          (doc) => doc.docChanges.forEach(
-            (post) {
-              final dynamic data = post.doc.data();
-
-              // TODO: Voir s'il n'es pas possible de stocker les requêtes
-              data['userRef'].get().then((user) {
-                UserModel userModel = UserModel.fromJson({
-                  ...user.data(),
-                  ...{UserModel.ID: user.id}
-                });
-
-                // Est-ce que le post est déjà dans la liste
-                final int index = _posts.indexWhere((p) => p.id == post.doc.id);
-
-                // Si le résultat est négatif on ajout un post
-                if (index == -1) {
-                  _posts.add(
-                    PostModel.fromJson({
-                      ...data,
-                      ...{
-                        PostModel.ID: post.doc.id,
-                        PostModel.DOCUMENT: post.doc,
-                        PostModel.USER: userModel,
-                      }
-                    }),
-                  );
-                } else if (post.type == DocumentChangeType.modified) {
-                  _posts[index] = PostModel.fromJson({
-                    ...data,
-                    ...{
-                      PostModel.ID: post.doc.id,
-                      PostModel.DOCUMENT: post.doc,
-                      PostModel.USER: userModel,
-                    }
-                  });
-                }
-
-                _postsStream.add(_posts);
-              });
-            },
-          ),
-        );
-
-    return _postsStream.stream;
   }
 
   /// Permet de vérifier que le slug n'est pas déjà utilisé
@@ -229,10 +192,56 @@ class FirestoreProvider {
     return Future.value(INVITED.VALID);
   }
 
+  // Permet de récupérer un post pour le feed
+  Stream<List<PostModel>> getPost({
+    int limit = 2,
+    PostModel post,
+  }) {
+    Query query = this
+        .firestore
+        .collection('posts')
+        .orderBy(
+          'createdAt',
+          descending: true,
+        )
+        .limit(limit);
+
+    if (post != null) {
+      query = query.startAfterDocument(post.document);
+    } else {
+      _posts.clear();
+    }
+
+    query.snapshots().listen(
+          (doc) => doc.docChanges.forEach(
+            (post) {
+              final dynamic data = post.doc.data();
+
+              // TODO: Voir s'il n'es pas possible de stocker les requêtes
+              data['userRef'].get().then((user) {
+                // Est-ce que le post est déjà dans la liste
+                final int index = _posts.indexWhere((p) => p.id == post.doc.id);
+
+                // Si le résultat est négatif on ajout un post
+                if (index == -1) {
+                  _posts.add(_convertToPostModel(post.doc, user));
+                } else if (post.type == DocumentChangeType.modified) {
+                  _posts[index] = _convertToPostModel(post.doc, user);
+                }
+
+                _postsStream.add(_posts);
+              });
+            },
+          ),
+        );
+
+    return _postsStream.stream;
+  }
+
   // Permet de charger en lazy loading les posts d'un utilisateur
-  Future getProfilePosts(String userId) async {
+  Stream<List<PostModel>> getProfilePosts(String userId) {
     if (_profilePostModels.length >= Config.maxPostWhenUserIsNotAuthenticated &&
-        !authProvider.isAuthenticated) return;
+        !authProvider.isAuthenticated) return _profilePostsStream.stream;
 
     DocumentReference documentReference =
         firestore.collection('users').doc(userId);
@@ -248,29 +257,29 @@ class FirestoreProvider {
           postQuery.startAfterDocument(_profilePostModels.last.document);
     }
 
-    QuerySnapshot postQuerySnapshot = await postQuery.get();
+    Stream<QuerySnapshot> postQuerySnapshot = postQuery.snapshots();
 
     // TODO: Peut-être que cette requête peut être appellée qu'une seule fois.
-    DocumentSnapshot userDocumentSnapshot = await documentReference.get();
+    Future<DocumentSnapshot> userDocumentSnapshot = documentReference.get();
 
-    postQuerySnapshot.docs.forEach((doc) async {
-      print('doc.id ${doc.id}');
+    userDocumentSnapshot.then((user) {
+      postQuerySnapshot.listen((post) {
+        post.docChanges.forEach((docChange) {
+          final int index =
+              _profilePostModels.indexWhere((p) => p.id == docChange.doc.id);
 
-      _profilePostModels.add(
-        PostModel.fromJson({
-          ...doc.data(),
-          ...{
-            PostModel.ID: doc.id,
-            PostModel.DOCUMENT: doc,
-            PostModel.USER: UserModel.fromJson({
-              ...userDocumentSnapshot.data(),
-              ...{
-                UserModel.ID: userDocumentSnapshot.id,
-              }
-            }),
+          if (index == -1) {
+            _profilePostModels.add(_convertToPostModel(docChange.doc, user));
+          } else if (docChange.type == DocumentChangeType.modified) {
+            _profilePostModels[index] =
+                _convertToPostModel(docChange.doc, user);
           }
-        }),
-      );
+        });
+
+        _profilePostsStream.add(_profilePostModels);
+      });
     });
+
+    return _profilePostsStream.stream;
   }
 }

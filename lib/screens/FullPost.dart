@@ -5,11 +5,10 @@ import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/widget/FeedPost.dart';
 
-class FullPost extends StatelessWidget {
+class FullPost extends StatefulWidget {
   final AuthProvider authProvider;
   final FirestoreProvider firestoreProvider;
   final FunctionProvider functionProvider;
-
   final PostModel post;
 
   const FullPost({
@@ -21,6 +20,25 @@ class FullPost extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _FullPostState createState() => _FullPostState();
+}
+
+class _FullPostState extends State<FullPost> {
+  PostModel _postModel;
+
+  @override
+  void initState() {
+    super.initState();
+
+    widget.firestoreProvider.profilPosts.listen((post) {
+      setState(() => _postModel =
+          post.firstWhere((p) => p.id == widget.post.id, orElse: () => null));
+    });
+
+    setState(() => _postModel = widget.post);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -29,12 +47,12 @@ class FullPost extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       body: Hero(
-        tag: post.id,
+        tag: widget.post.id,
         child: FeedPost(
-          authProvider: authProvider,
-          firestoreProvider: firestoreProvider,
-          functionProvider: functionProvider,
-          post: post,
+          authProvider: widget.authProvider,
+          firestoreProvider: widget.firestoreProvider,
+          functionProvider: widget.functionProvider,
+          post: _postModel,
         ),
       ),
     );

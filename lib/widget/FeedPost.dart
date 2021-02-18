@@ -52,8 +52,6 @@ class _FeedPostState extends State<FeedPost> {
         setState(() => _isLiked = result != null);
       }
     });
-
-    print('FeedPost: ${widget.post.id}');
   }
 
   @override
@@ -126,14 +124,7 @@ class _FeedPostState extends State<FeedPost> {
                             width: MediaQuery.of(context).size.width,
                           ),
                         ),
-                      )
-
-                      // CircleAvatar(
-                      //   backgroundColor: Theme.of(context).primaryColor,
-                      //   radius: 28.0,
-                      //   backgroundImage: NetworkImage(widget.post.user.photoURL),
-                      // ),
-                      ),
+                      )),
                 ),
                 LikeButton(
                   onTap: () async {

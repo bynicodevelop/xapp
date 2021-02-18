@@ -11,7 +11,6 @@ class ThumbPost extends StatefulWidget {
   final AuthProvider authProvider;
   final FirestoreProvider firestoreProvider;
   final FunctionProvider functionProvider;
-
   final PostModel post;
 
   const ThumbPost({
@@ -41,6 +40,11 @@ class _ThumbPostState extends State<ThumbPost> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
@@ -48,14 +52,14 @@ class _ThumbPostState extends State<ThumbPost> {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => FullPost(
+        MaterialPageRoute(builder: (context) {
+          return FullPost(
             authProvider: widget.authProvider,
             firestoreProvider: widget.firestoreProvider,
             functionProvider: widget.functionProvider,
             post: widget.post,
-          ),
-        ),
+          );
+        }),
       ),
       child: Hero(
         tag: widget.post.id,
