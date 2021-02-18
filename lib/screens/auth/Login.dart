@@ -7,6 +7,7 @@ import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Registration.dart';
 import 'package:xapp/services/Translate.dart';
+import 'package:xapp/transitions/FadeRouteTransition.dart';
 import 'package:xapp/widget/form/LinkButton.dart';
 import 'package:xapp/widget/form/MainButton.dart';
 import 'package:xapp/widget/form/PasswordInput.dart';
@@ -109,8 +110,8 @@ class _LoginState extends State<Login> {
 
                                   Navigator.pushAndRemoveUntil(
                                     context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Home(),
+                                    FadeRouteTransition(
+                                      page: Home(),
                                     ),
                                     (_) => false,
                                   );
@@ -137,13 +138,14 @@ class _LoginState extends State<Login> {
                       LinkButton(
                         label: t(context).createAccountBtn,
                         onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Registration(
-                                firestoreProvider: _firestoreProvider,
-                                functionProvider: _functionProvider,
-                              ),
-                            )),
+                          context,
+                          FadeRouteTransition(
+                            page: Registration(
+                              firestoreProvider: _firestoreProvider,
+                              functionProvider: _functionProvider,
+                            ),
+                          ),
+                        ),
                       )
                     ],
                   ),

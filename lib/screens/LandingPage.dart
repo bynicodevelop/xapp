@@ -5,6 +5,7 @@ import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Booking.dart';
 import 'package:xapp/screens/auth/Registration.dart';
 import 'package:xapp/services/Translate.dart';
+import 'package:xapp/transitions/FadeRouteTransition.dart';
 import 'package:xapp/widget/form/MainButton.dart';
 import 'package:xapp/widget/typographie/Heading.dart';
 import 'package:xapp/widget/typographie/MainText.dart';
@@ -44,8 +45,8 @@ class LandingPage extends StatelessWidget {
             label: t(context).invitationLabel,
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => Registration(
+              FadeRouteTransition(
+                page: Registration(
                   firestoreProvider: firestoreProvider,
                   functionProvider: functionProvider,
                 ),
@@ -61,8 +62,8 @@ class LandingPage extends StatelessWidget {
             ),
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => Booking(
+              FadeRouteTransition(
+                page: Booking(
                   firestoreProvider: firestoreProvider,
                   functionProvider: functionProvider,
                 ),

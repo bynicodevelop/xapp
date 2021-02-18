@@ -11,6 +11,7 @@ import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Booking.dart';
 import 'package:xapp/screens/auth/Login.dart';
 import 'package:xapp/services/Translate.dart';
+import 'package:xapp/transitions/FadeRouteTransition.dart';
 import 'package:xapp/widget/FollowButton.dart';
 import 'package:xapp/widget/Stat.dart';
 import 'package:xapp/widget/ThumbPost.dart';
@@ -266,18 +267,18 @@ class _PublicProfileState extends State<PublicProfile> {
                                     height: 50.0,
                                     width: 200.0,
                                     child: SecondaryButton(
-                                      label: "Me connecter",
+                                      label: t(context).connectMeButton,
                                       onPressed: () => Navigator.push(
                                         context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Login(),
+                                        FadeRouteTransition(
+                                          page: Login(),
                                         ),
                                       ),
                                     ),
                                   ),
                                   MaterialButton(
                                     child: Text(
-                                      "Créer un compte",
+                                      t(context).createAccountBtn,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText2
@@ -288,11 +289,11 @@ class _PublicProfileState extends State<PublicProfile> {
                                     ),
                                     onPressed: () => Navigator.push(
                                       context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Booking(
-                                            // firestoreProvider: firestoreProvider,
-                                            // functionProvider: functionProvider,
-                                            ),
+                                      FadeRouteTransition(
+                                        page: Booking(
+                                          firestoreProvider: _firestoreProvider,
+                                          functionProvider: _functionProvider,
+                                        ),
                                       ),
                                     ),
                                   )

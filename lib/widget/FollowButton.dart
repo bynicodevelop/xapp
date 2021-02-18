@@ -3,6 +3,7 @@ import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Login.dart';
 import 'package:xapp/services/Translate.dart';
+import 'package:xapp/transitions/FadeRouteTransition.dart';
 import 'package:xapp/widget/form/MainButton.dart';
 
 class FollowButton extends StatefulWidget {
@@ -61,8 +62,8 @@ class _FollowButtonState extends State<FollowButton> {
           } catch (e) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => Login(),
+              FadeRouteTransition(
+                page: Login(),
               ),
             );
           }
