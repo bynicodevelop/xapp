@@ -27,6 +27,10 @@
   "@goodNew": {
     "description": "Bonne nouvelle !"
   },
+  "reserveUsernameTitle": "Reservez votre nom d'utilisateur",
+  "@reserveUsernameTitle": {
+    "description": "Reservez votre nom d'utilisateur"
+  },
   "reserveUsername": "Vous pouvez réserver votre nom d'utilisateur.",
   "@reserveUsername": {
     "description": "Vous pouvez réserver votre nom d'utilisateur."

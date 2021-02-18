@@ -11,6 +11,8 @@ import 'package:xapp/widget/form/LinkButton.dart';
 import 'package:xapp/widget/form/MainButton.dart';
 import 'package:xapp/widget/form/PasswordInput.dart';
 import 'package:xapp/widget/form/TextInput.dart';
+import 'package:xapp/widget/typographie/Heading.dart';
+import 'package:xapp/widget/typographie/MainText.dart';
 
 class Login extends StatefulWidget {
   const Login({Key key}) : super(key: key);
@@ -60,25 +62,11 @@ class _LoginState extends State<Login> {
                   height: 100.0,
                   image: AssetImage("assets/logo.png"),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 5.0,
-                    bottom: 50.0,
-                  ),
-                  child: Text(
-                    t(context).loginTitle,
-                    style: Theme.of(context).textTheme.headline1,
-                    textAlign: TextAlign.center,
-                  ),
+                Heading(
+                  label: t(context).loginTitle,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 15.0,
-                  ),
-                  child: Text(
-                    t(context).loginText,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
+                MainText(
+                  label: t(context).loginText,
                 ),
                 Form(
                   key: _formKey,

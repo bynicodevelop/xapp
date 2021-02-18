@@ -11,6 +11,8 @@ import 'package:xapp/services/Translate.dart';
 import 'package:xapp/widget/form/MainButton.dart';
 import 'package:xapp/widget/form/PasswordInput.dart';
 import 'package:xapp/widget/form/TextInput.dart';
+import 'package:xapp/widget/typographie/Heading.dart';
+import 'package:xapp/widget/typographie/MainText.dart';
 
 class CreateAccount extends StatefulWidget {
   final FirestoreProvider firestoreProvider;
@@ -78,23 +80,11 @@ class _CreateAccountState extends State<CreateAccount> {
             ),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 20.0,
-                  ),
-                  child: Text(
-                    t(context).createAccountTitle,
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
+                Heading(
+                  label: t(context).createAccountTitle,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 10.0,
-                  ),
-                  child: Text(
-                    t(context).textCreateAccount,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
+                MainText(
+                  label: t(context).textCreateAccount,
                 ),
                 Form(
                   key: _formKey,

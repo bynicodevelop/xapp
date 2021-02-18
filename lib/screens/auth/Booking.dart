@@ -6,6 +6,8 @@ import 'package:xapp/screens/auth/Thanks.dart';
 import 'package:xapp/services/FormValidation.dart';
 import 'package:xapp/services/Translate.dart';
 import 'package:xapp/widget/form/MainButton.dart';
+import 'package:xapp/widget/typographie/Heading.dart';
+import 'package:xapp/widget/typographie/MainText.dart';
 
 class Booking extends StatefulWidget {
   final FirestoreProvider firestoreProvider;
@@ -84,45 +86,21 @@ class _BookingState extends State<Booking> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 20.0,
-                  ),
-                  child: Text(
-                    "Reservez votre nom d'utilisateur",
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
+                Heading(
+                  label: t(context).reserveUsernameTitle,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 10.0,
-                  ),
-                  child: Text(
-                    widget.email.isNotEmpty
-                        ? t(context).invalidInvitationEmailMessage
-                        : t(context)
-                            .appInLaunch
-                            .replaceFirst(r'$appName', Config.appName),
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
+                MainText(
+                  label: widget.email.isNotEmpty
+                      ? t(context).invalidInvitationEmailMessage
+                      : t(context)
+                          .appInLaunch
+                          .replaceFirst(r'$appName', Config.appName),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 10.0,
-                  ),
-                  child: Text(
-                    "Mais bonne nouvelle !",
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
+                MainText(
+                  label: t(context).goodNew,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 10.0,
-                  ),
-                  child: Text(
-                    t(context).reserveUsername,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
+                MainText(
+                  label: t(context).reserveUsername,
                 ),
                 Form(
                   key: _formKey,

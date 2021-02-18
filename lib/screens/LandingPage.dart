@@ -6,6 +6,8 @@ import 'package:xapp/screens/auth/Booking.dart';
 import 'package:xapp/screens/auth/Registration.dart';
 import 'package:xapp/services/Translate.dart';
 import 'package:xapp/widget/form/MainButton.dart';
+import 'package:xapp/widget/typographie/Heading.dart';
+import 'package:xapp/widget/typographie/MainText.dart';
 
 class LandingPage extends StatelessWidget {
   final FirestoreProvider firestoreProvider;
@@ -24,35 +26,19 @@ class LandingPage extends StatelessWidget {
         horizontal: 20.0,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 20.0,
-            ),
-            child: Text(
-              Config.appName,
-              style: Theme.of(context).textTheme.headline1,
-            ),
+          Heading(
+            label: Config.appName,
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 15.0,
-            ),
-            child: Text(
-              t(context).appInLaunch.replaceFirst(r'$appName', Config.appName),
-              style: Theme.of(context).textTheme.bodyText2,
-            ),
+          MainText(
+            label: t(context)
+                .appInLaunch
+                .replaceFirst(r'$appName', Config.appName),
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 20.0,
-            ),
-            child: Text(
-              t(context).registrationOnInvivationMessage,
-              style: Theme.of(context).textTheme.bodyText2,
-              textAlign: TextAlign.center,
-            ),
+          MainText(
+            label: t(context).registrationOnInvivationMessage,
           ),
           MainButton(
             label: t(context).invitationLabel,

@@ -7,6 +7,8 @@ import 'package:xapp/screens/auth/CreateAccount.dart';
 import 'package:xapp/screens/auth/Login.dart';
 import 'package:xapp/services/Translate.dart';
 import 'package:xapp/widget/form/MainButton.dart';
+import 'package:xapp/widget/typographie/Heading.dart';
+import 'package:xapp/widget/typographie/MainText.dart';
 
 class Registration extends StatefulWidget {
   final FirestoreProvider firestoreProvider;
@@ -62,23 +64,11 @@ class _RegistrationState extends State<Registration> {
             ),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 20.0,
-                  ),
-                  child: Text(
-                    t(context).createAccountTitle,
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
+                Heading(
+                  label: t(context).createAccountTitle,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 15.0,
-                  ),
-                  child: Text(
-                    t(context).enterInvitedEmailText,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
+                MainText(
+                  label: t(context).enterInvitedEmailText,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xapp/services/Translate.dart';
+import 'package:xapp/widget/typographie/Heading.dart';
+import 'package:xapp/widget/typographie/MainText.dart';
 
 class Thanks extends StatelessWidget {
   const Thanks({Key key}) : super(key: key);
@@ -15,27 +17,14 @@ class Thanks extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                bottom: 20.0,
-              ),
-              child: Text(
-                t(context).thanksTitle,
-                style: Theme.of(context).textTheme.headline1,
-              ),
+            Heading(
+              label: t(context).thanksTitle,
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                bottom: 10.0,
-              ),
-              child: Text(
-                t(context).usernameReservedText,
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
+            MainText(
+              label: t(context).usernameReservedText,
             ),
-            Text(
-              t(context).checkInboxText,
-              style: Theme.of(context).textTheme.bodyText2,
+            MainText(
+              label: t(context).checkInboxText,
             ),
           ],
         ),
