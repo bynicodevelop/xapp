@@ -5,6 +5,7 @@ import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Booking.dart';
 import 'package:xapp/screens/auth/CreateAccount.dart';
 import 'package:xapp/screens/auth/Login.dart';
+import 'package:xapp/services/Translate.dart';
 import 'package:xapp/widget/form/MainButton.dart';
 
 class Registration extends StatefulWidget {
@@ -23,13 +24,6 @@ class Registration extends StatefulWidget {
 
 class _RegistrationState extends State<Registration> {
   final TextEditingController _textEditingController = TextEditingController();
-
-  Map<String, dynamic> errorMessage = {
-    INVITED.EMAIL_NOT_FOUND.toString():
-        "L'email que vous avez saisi ne correpond pas à une invitation.",
-    INVITED.INVALID_EMAIL.toString():
-        "Actuellement, votre email n'est pas valide.",
-  };
 
   bool _isValid = false;
 
@@ -73,7 +67,7 @@ class _RegistrationState extends State<Registration> {
                     bottom: 20.0,
                   ),
                   child: Text(
-                    'Créons votre compte',
+                    t(context).createAccountTitle,
                     style: Theme.of(context).textTheme.headline1,
                   ),
                 ),
@@ -82,7 +76,7 @@ class _RegistrationState extends State<Registration> {
                     bottom: 15.0,
                   ),
                   child: Text(
-                    "Veuillez saisir l'adresse email à laquelle vous avez été invité.",
+                    t(context).enterInvitedEmailText,
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),
@@ -97,7 +91,7 @@ class _RegistrationState extends State<Registration> {
                         controller: _textEditingController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Entrez votre email principale',
+                          labelText: t(context).emailLabelForm,
                         ),
                       ),
                       Visibility(
@@ -108,7 +102,7 @@ class _RegistrationState extends State<Registration> {
                             top: 10.0,
                           ),
                           child: Text(
-                            "Actuellement, votre email n'est pas valide.",
+                            t(context).invalideEmail,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText2
@@ -120,7 +114,7 @@ class _RegistrationState extends State<Registration> {
                   ),
                 ),
                 MainButton(
-                  label: 'Continuer'.toUpperCase(),
+                  label: t(context).continueButton.toUpperCase(),
                   onPressed: _isValid
                       ? () async {
                           final INVITED result = await widget.firestoreProvider

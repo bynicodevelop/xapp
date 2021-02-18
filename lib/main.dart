@@ -1,3 +1,5 @@
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -89,6 +91,15 @@ class _AppState extends State<App> {
           child: MaterialApp(
             title: 'Flutter Demo',
             debugShowCheckedModeBanner: false,
+            localizationsDelegates: [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: [
+              const Locale('fr', ''),
+            ],
             theme: ThemeData(
               primaryColor: Color(Config.primaryColor),
               accentColor: Color(0xFFFF8F00),

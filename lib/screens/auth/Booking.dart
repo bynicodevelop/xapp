@@ -4,6 +4,7 @@ import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Thanks.dart';
 import 'package:xapp/services/FormValidation.dart';
+import 'package:xapp/services/Translate.dart';
 import 'package:xapp/widget/form/MainButton.dart';
 
 class Booking extends StatefulWidget {
@@ -98,8 +99,10 @@ class _BookingState extends State<Booking> {
                   ),
                   child: Text(
                     widget.email.isNotEmpty
-                        ? "L'adresse email que vous avez saisie, ne fait pas partie de nos invités."
-                        : "${Config.appName} est encore en plein lancement.",
+                        ? t(context).invalidInvitationEmailMessage
+                        : t(context)
+                            .appInLaunch
+                            .replaceFirst(r'$appName', Config.appName),
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),
@@ -117,7 +120,7 @@ class _BookingState extends State<Booking> {
                     bottom: 10.0,
                   ),
                   child: Text(
-                    "Vous pouvez réserver votre nom d'utilisateur.",
+                    t(context).reserveUsername,
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),
@@ -139,7 +142,7 @@ class _BookingState extends State<Booking> {
                             decoration: InputDecoration(
                               errorMaxLines: 2,
                               border: OutlineInputBorder(),
-                              labelText: "Entrez votre email principal",
+                              labelText: t(context).emailLabelForm,
                             ),
                           ),
                         ),
@@ -152,11 +155,11 @@ class _BookingState extends State<Booking> {
                           controller: _usernameController,
                           validator: (value) => value.length > 2
                               ? null
-                              : "Votre nom d'utilisateur doit contenir au moins 2 catactères",
+                              : t(context).invalidUsername,
                           decoration: InputDecoration(
                             errorMaxLines: 2,
                             border: OutlineInputBorder(),
-                            labelText: "Entrez un nom d'utilisateur",
+                            labelText: t(context).usernameLabelForm,
                           ),
                         ),
                       ),
@@ -171,18 +174,17 @@ class _BookingState extends State<Booking> {
                               decoration: InputDecoration(
                                 errorMaxLines: 2,
                                 errorText: !_isUniqueSlug
-                                    ? "Cet identifiant exist déjà. Pourquoi ne pas en essayer un autre."
+                                    ? t(context).slugAlreadyUse
                                     : null,
                                 border: OutlineInputBorder(),
-                                labelText:
-                                    "Votre identifiant pourrait être le suivant...",
+                                labelText: t(context).slugExample,
                               ),
                             ),
                           ],
                         ),
                       ),
                       MainButton(
-                        label: 'Reserver'.toUpperCase(),
+                        label: t(context).reserve.toUpperCase(),
                         onPressed: _isValid && _isUniqueSlug
                             ? () async {
                                 if (_formKey.currentState.validate()) {
@@ -204,8 +206,8 @@ class _BookingState extends State<Booking> {
                                   } else {
                                     _scaffoldKey.currentState.showSnackBar(
                                       SnackBar(
-                                        content: Text(
-                                            "Nous n'avons pas pu prendre en compte votre enregistrement pour des raisons techniques."),
+                                        content:
+                                            Text(t(context).errorRegistration),
                                       ),
                                     );
                                   }

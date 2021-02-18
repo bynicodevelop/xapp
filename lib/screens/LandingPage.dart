@@ -4,6 +4,7 @@ import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Booking.dart';
 import 'package:xapp/screens/auth/Registration.dart';
+import 'package:xapp/services/Translate.dart';
 import 'package:xapp/widget/form/MainButton.dart';
 
 class LandingPage extends StatelessWidget {
@@ -39,7 +40,7 @@ class LandingPage extends StatelessWidget {
               bottom: 15.0,
             ),
             child: Text(
-              '${Config.appName} est encore en plein lancement.',
+              t(context).appInLaunch,
               style: Theme.of(context).textTheme.bodyText2,
             ),
           ),
@@ -48,13 +49,13 @@ class LandingPage extends StatelessWidget {
               bottom: 20.0,
             ),
             child: Text(
-              "Il possible de s'inscrire que si vous avez reçu une invitation.",
+              t(context).registrationOnInvivationMessage,
               style: Theme.of(context).textTheme.bodyText2,
               textAlign: TextAlign.center,
             ),
           ),
           MainButton(
-            label: "Je n'ai reçu une invitation",
+            label: t(context).invitationLabel,
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -67,7 +68,7 @@ class LandingPage extends StatelessWidget {
           ),
           MaterialButton(
             child: Text(
-              "J'ai pas de lien",
+              t(context).notInvitationLabel,
               style: Theme.of(context).textTheme.bodyText2.copyWith(
                     fontStyle: FontStyle.italic,
                   ),

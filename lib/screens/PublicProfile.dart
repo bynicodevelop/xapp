@@ -10,6 +10,7 @@ import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Booking.dart';
 import 'package:xapp/screens/auth/Login.dart';
+import 'package:xapp/services/Translate.dart';
 import 'package:xapp/widget/FollowButton.dart';
 import 'package:xapp/widget/Stat.dart';
 import 'package:xapp/widget/ThumbPost.dart';
@@ -156,12 +157,12 @@ class _PublicProfileState extends State<PublicProfile> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Stat(
-                              label: 'Followers',
+                              label: t(context).followers.toUpperCase(),
                               number: _user.followers,
                               align: Stat.LEFT,
                             ),
                             Stat(
-                              label: 'Followings',
+                              label: t(context).followings.toUpperCase(),
                               number: _user.followings,
                               align: Stat.RIGHT,
                             ),

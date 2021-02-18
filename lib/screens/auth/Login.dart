@@ -6,6 +6,7 @@ import 'package:xapp/providers/AuthProvider.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Registration.dart';
+import 'package:xapp/services/Translate.dart';
 import 'package:xapp/widget/form/LinkButton.dart';
 import 'package:xapp/widget/form/MainButton.dart';
 import 'package:xapp/widget/form/PasswordInput.dart';
@@ -65,7 +66,7 @@ class _LoginState extends State<Login> {
                     bottom: 50.0,
                   ),
                   child: Text(
-                    "Connexion",
+                    t(context).loginTitle,
                     style: Theme.of(context).textTheme.headline1,
                     textAlign: TextAlign.center,
                   ),
@@ -75,7 +76,7 @@ class _LoginState extends State<Login> {
                     bottom: 15.0,
                   ),
                   child: Text(
-                    "Veuillez renseigner les champs du formulaire avec les indentifiants que vous avez utilisé pendant votre inscription",
+                    t(context).loginText,
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),
@@ -88,27 +89,26 @@ class _LoginState extends State<Login> {
                       TextInput(
                         controller: _emailController,
                         validator: (value) => !EmailValidator.validate(value)
-                            ? "Merci de saisir une adresse email valide"
+                            ? t(context).enterValideEmailErrorMessage
                             : null,
-                        label: "Entrez votre adresse email",
+                        label: t(context).emailLabelForm,
                       ),
                       PasswordInput(
                         controller: _passwordController,
                         validator: (value) => value.length < 6
-                            ? "Votre mot de passe doit contenir au moins 6 caractères"
+                            ? t(context).passwordErrorMessage
                             : null,
-                        label: "Entrez votre mot de passe",
+                        label: t(context).passwordLabel,
                       ),
                       MainButton(
-                        label: "Me connecter",
+                        label: t(context).connectMeButton,
                         onPressed: _isValid
                             ? () async {
                                 if (!_formKey.currentState.validate()) {
                                   // TODO: Afficher une snackbar
                                   _scaffoldKey.currentState
                                       .showSnackBar(SnackBar(
-                                    content: Text(
-                                        "Le formulaire n'est pas complet ou des champs ne sont pas valides"),
+                                    content: Text(t(context).invalidForm),
                                   ));
                                   return;
                                 }
@@ -128,13 +128,13 @@ class _LoginState extends State<Login> {
                                   );
                                 } catch (e) {
                                   String message =
-                                      "Une erreur est survenue pendant votre connexion. Nous mettons tout en oeuvre pour résoudre le problème.";
+                                      t(context).conectionErrorMessage;
 
                                   switch (e.code) {
                                     case 'user-not-found':
                                     case 'wrong-password':
                                       message =
-                                          "Vos identifiants ne correpondent à aucun membre.";
+                                          t(context).badCredentialErrorMessage;
                                       break;
                                   }
                                   _scaffoldKey.currentState.showSnackBar(
@@ -147,7 +147,7 @@ class _LoginState extends State<Login> {
                             : null,
                       ),
                       LinkButton(
-                        label: "Créer un compte",
+                        label: t(context).createAccountBtn,
                         onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(

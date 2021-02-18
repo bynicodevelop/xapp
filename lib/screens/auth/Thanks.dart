@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xapp/services/Translate.dart';
 
 class Thanks extends StatelessWidget {
   const Thanks({Key key}) : super(key: key);
@@ -19,7 +20,7 @@ class Thanks extends StatelessWidget {
                 bottom: 20.0,
               ),
               child: Text(
-                'Merci.',
+                t(context).thanksTitle,
                 style: Theme.of(context).textTheme.headline1,
               ),
             ),
@@ -28,12 +29,12 @@ class Thanks extends StatelessWidget {
                 bottom: 10.0,
               ),
               child: Text(
-                "Votre nom d'utilisateur est réservé.",
+                t(context).usernameReservedText,
                 style: Theme.of(context).textTheme.bodyText2,
               ),
             ),
             Text(
-              "Surveillez votre boite mail, il est possible que vous receviez un accès à votre compte.",
+              t(context).checkInboxText,
               style: Theme.of(context).textTheme.bodyText2,
             ),
           ],

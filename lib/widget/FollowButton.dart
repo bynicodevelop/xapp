@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Login.dart';
+import 'package:xapp/services/Translate.dart';
 import 'package:xapp/widget/form/MainButton.dart';
 
 class FollowButton extends StatefulWidget {
@@ -45,7 +46,8 @@ class _FollowButtonState extends State<FollowButton> {
         right: 50.0,
       ),
       child: MainButton(
-        label: (_isFollowed ? 'Unfollow' : 'Follow').toUpperCase(),
+        label: (_isFollowed ? t(context).unfollow : t(context).follow)
+            .toUpperCase(),
         color: _isFollowed ? Color(0xFFb11754) : null,
         // color: _isFollowed ? Colors.grey : null,
         onPressed: () async {

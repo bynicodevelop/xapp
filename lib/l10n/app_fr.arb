@@ -1,0 +1,158 @@
+{
+  "followers": "Followers",
+  "@followers": {
+    "description": "Nombre de followers"
+  },
+  "followings": "Followings",
+  "@followings": {
+    "description": "Nombre de followings"
+  },
+  "follow": "Follow",
+  "@follow": {
+    "description": "Bouton follow"
+  },
+  "unfollow": "Unfollow",
+  "@unfollow": {
+    "description": "Bouton unfollow"
+  },
+  "invalidInvitationEmailMessage": "L'adresse email que vous avez saisie, ne fait pas partie de nos invités.",
+  "@invalidInvitationEmailMessage": {
+    "description": "L'adresse email que vous avez saisie, ne fait pas partie de nos invités."
+  },
+  "appInLaunch": "$appName est encore en plein lancement.",
+  "@appInLaunch": {
+    "description": "$appName est encore en plein lancement."
+  },
+  "goodNew": "Bonne nouvelle !",
+  "@goodNew": {
+    "description": "Bonne nouvelle !"
+  },
+  "reserveUsername": "Vous pouvez réserver votre nom d'utilisateur.",
+  "@reserveUsername": {
+    "description": "Vous pouvez réserver votre nom d'utilisateur."
+  },
+  "emailLabelForm": "Entrez votre email principal",
+  "@emailLabelForm": {
+    "description": "Entrez votre email principal"
+  },
+  "invalidUsername": "Votre nom d'utilisateur doit contenir au moins 2 catactères.",
+  "@invalidUsername": {
+    "description": "Votre nom d'utilisateur doit contenir au moins 2 catactères."
+  },
+  "usernameLabelForm": "Entrez un nom d'utilisateur",
+  "@usernameLabelForm": {
+    "description": "Entrez un nom d'utilisateur"
+  },
+  "slugAlreadyUse": "Cet identifiant exist déjà. Pourquoi ne pas en essayer un autre.",
+  "@slugAlreadyUse": {
+    "description": "Cet identifiant exist déjà. Pourquoi ne pas en essayer un autre."
+  },
+  "slugExample": "Votre identifiant pourrait être le suivant...",
+  "@slugExample": {
+    "description": "Votre identifiant pourrait être le suivant..."
+  },
+  "reserve": "Reserver",
+  "@reserve": {
+    "description": "Reserver"
+  },
+  "errorRegistration": "Nous n'avons pas pu prendre en compte votre enregistrement pour des raisons techniques.",
+  "@errorRegistration": {
+    "description": "Nous n'avons pas pu prendre en compte votre enregistrement pour des raisons techniques."
+  },
+  "registrationOnInvivationMessage": "Il est possible de s'inscrire que si vous avez reçu une invitation.",
+  "@registrationOnInvivationMessage": {
+    "description": "Il est possible de s'inscrire que si vous avez reçu une invitation."
+  },
+  "invitationLabel": "J'ai reçu une invitation",
+  "@invitationLabel": {
+    "description": "J'ai reçu une invitation"
+  },
+  "notInvitationLabel": "Je n'ai reçu d'invitation",
+  "@notInvitationLabel": {
+    "description": "Je n'ai reçu d'invitation"
+  },
+  "createAccountTitle": "Créons votre compte",
+  "@createAccountTitle": {
+    "description": "Créons votre compte"
+  },
+  "textCreateAccount": "Pour finaliser la préparation de votre compte, merci de remplir les champs suivants.",
+  "@textCreateAccount": {
+    "description": "Pour finaliser la préparation de votre compte, merci de remplir les champs suivants."
+  },
+  "passwordErrorMessage": "Votre mot de passe doit contenu plus de 6 caractères.",
+  "@passwordErrorMessage": {
+    "description": "Votre mot de passe doit contenu plus de 6 caractères."
+  },
+  "passwordLabel": "Saisissez un mot de passe",
+  "@passwordLabel": {
+    "description": "Saisissez un mot de passe"
+  },
+  "createAccountErrorMessage": "Nous n'avons pas pu créer votre compte. Nos service ont été prévenu (Merci de bien vouloir réésayer un peu plutard).",
+  "@createAccountErrorMessage": {
+    "description": "Nous n'avons pas pu créer votre compte. Nos service ont été prévenu (Merci de bien vouloir réésayer un peu plutard)."
+  },
+  "createAccountButton": "Créer mon compte",
+  "@createAccountButton": {
+    "description": "Créer mon compte"
+  },
+  "loginTitle": "Connexion",
+  "@loginTitle": {
+    "description": "Connexion"
+  },
+  "loginText": "Veuillez renseigner les champs du formulaire avec les indentifiants que vous avez utilisé pendant votre inscription",
+  "@loginText": {
+    "description": "Veuillez renseigner les champs du formulaire avec les indentifiants que vous avez utilisé pendant votre inscription"
+  },
+  "enterValideEmailErrorMessage": "Merci de saisir une adresse email valide",
+  "@enterValideEmailErrorMessage": {
+    "description": "Merci de saisir une adresse email valide"
+  },
+  "connectMeButton": "Me connecter",
+  "@connectMeButton": {
+    "description": "Me connecter"
+  },
+  "invalidForm": "Le formulaire n'est pas complet ou des champs ne sont pas valides",
+  "@invalidForm": {
+    "description": "Le formulaire n'est pas complet ou des champs ne sont pas valides"
+  },
+  "conectionErrorMessage": "Une erreur est survenue pendant votre connexion. Nous mettons tout en oeuvre pour résoudre le problème.",
+  "@conectionErrorMessage": {
+    "description": "Une erreur est survenue pendant votre connexion. Nous mettons tout en oeuvre pour résoudre le problème."
+  },
+  "badCredentialErrorMessage": "Vos identifiants ne correpondent à aucun membre.",
+  "@badCredentialErrorMessage": {
+    "description": "Vos identifiants ne correpondent à aucun membre."
+  },
+  "createAccountBtn": "Créer un compte",
+  "@createAccountBtn": {
+    "description": "Créer un compte"
+  },
+  "notInvitationEmail": "L'email que vous avez saisi ne correpond pas à une invitation.",
+  "@notInvitationEmail": {
+    "description": "L'email que vous avez saisi ne correpond pas à une invitation."
+  },
+  "invalideEmail": "Actuellement, votre email n'est pas valide.",
+  "@invalideEmail": {
+    "description": "Actuellement, votre email n'est pas valide."
+  },
+  "enterInvitedEmailText": "Veuillez saisir l'adresse email à laquelle vous avez été invité.",
+  "@enterInvitedEmailText": {
+    "description": "Veuillez saisir l'adresse email à laquelle vous avez été invité."
+  },
+  "continueButton": "Continuer",
+  "@continueButton": {
+    "description": "Continuer"
+  },
+  "thanksTitle": "Merci.",
+  "@thanksTitle": {
+    "description": "Merci."
+  },
+  "usernameReservedText": "Votre nom d'utilisateur est réservé.",
+  "@usernameReservedText": {
+    "description": "Votre nom d'utilisateur est réservé."
+  },
+  "checkInboxText": "Surveillez votre boite mail, il est possible que vous receviez un accès à votre compte.",
+  "@checkInboxText": {
+    "description": "Surveillez votre boite mail, il est possible que vous receviez un accès à votre compte."
+  }
+}

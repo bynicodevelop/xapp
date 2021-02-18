@@ -7,6 +7,7 @@ import 'package:xapp/providers/AuthProvider.dart';
 import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/services/FormValidation.dart';
+import 'package:xapp/services/Translate.dart';
 import 'package:xapp/widget/form/MainButton.dart';
 import 'package:xapp/widget/form/PasswordInput.dart';
 import 'package:xapp/widget/form/TextInput.dart';
@@ -82,7 +83,7 @@ class _CreateAccountState extends State<CreateAccount> {
                     bottom: 20.0,
                   ),
                   child: Text(
-                    "Créons votre compte",
+                    t(context).createAccountTitle,
                     style: Theme.of(context).textTheme.headline1,
                   ),
                 ),
@@ -91,7 +92,7 @@ class _CreateAccountState extends State<CreateAccount> {
                     bottom: 10.0,
                   ),
                   child: Text(
-                    "Pour finaliser la préparation de votre compte, merci de remplir les champs suivants",
+                    t(context).textCreateAccount,
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),
@@ -103,25 +104,23 @@ class _CreateAccountState extends State<CreateAccount> {
                   child: Column(
                     children: [
                       TextInput(
-                        controller: _usernameController,
-                        label: "Entrez un nom d'utilisateur",
-                        validator: (value) => value.length > 2
-                            ? null
-                            : "Votre nom d'utilisateur doit contenir au moins 2 catactères",
-                      ),
+                          controller: _usernameController,
+                          label: t(context).usernameLabelForm,
+                          validator: (value) => value.length > 2
+                              ? null
+                              : t(context).invalidUsername),
                       TextInput(
                         controller: _slugController,
-                        validator: (value) => !_isUniqueSlug
-                            ? "Cet identifiant exist déjà. Pourquoi ne pas en essayer un autre."
-                            : null,
-                        label: "Votre identifiant pourrait être le suivant...",
+                        validator: (value) =>
+                            !_isUniqueSlug ? t(context).slugAlreadyUse : null,
+                        label: t(context).slugExample,
                       ),
                       PasswordInput(
                         controller: _passwordController,
                         validator: (value) => value.length > 5
                             ? null
-                            : "Votre mot de passe doit contenu plus de 6 caractères.",
-                        label: "Saisissez un mot de passe",
+                            : t(context).passwordErrorMessage,
+                        label: t(context).passwordLabel,
                       ),
                       MainButton(
                         onPressed: _isValid && _isUniqueSlug
@@ -140,8 +139,8 @@ class _CreateAccountState extends State<CreateAccount> {
                                   if (uid == null) {
                                     _scaffoldKey.currentState.showSnackBar(
                                       SnackBar(
-                                        content: Text(
-                                            "Nous n'avons pas pu créer votre compte. Nos service ont été prévenu (Merci de bien vouloir réésayer un peu plutard)."),
+                                        content: Text(t(context)
+                                            .createAccountErrorMessage),
                                       ),
                                     );
 
@@ -177,7 +176,7 @@ class _CreateAccountState extends State<CreateAccount> {
                                 }
                               }
                             : null,
-                        label: "Créer mon compte".toUpperCase(),
+                        label: t(context).createAccountButton.toUpperCase(),
                       )
                     ],
                   ),
