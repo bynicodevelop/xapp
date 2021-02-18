@@ -148,10 +148,6 @@ class FirestoreProvider {
             (post) {
               final dynamic data = post.doc.data();
 
-              print(post.type == DocumentChangeType.modified);
-
-              print('PostModel Id: ${post.doc.id}');
-
               // TODO: Voir s'il n'es pas possible de stocker les requêtes
               data['userRef'].get().then((user) {
                 UserModel userModel = UserModel.fromJson({
@@ -159,7 +155,11 @@ class FirestoreProvider {
                   ...{UserModel.ID: user.id}
                 });
 
-                if (post.type == DocumentChangeType.added) {
+                // Est-ce que le post est déjà dans la liste
+                final int index = _posts.indexWhere((p) => p.id == post.doc.id);
+
+                // Si le résultat est négatif on ajout un post
+                if (index == -1) {
                   _posts.add(
                     PostModel.fromJson({
                       ...data,
@@ -171,7 +171,6 @@ class FirestoreProvider {
                     }),
                   );
                 } else if (post.type == DocumentChangeType.modified) {
-                  int index = _posts.indexWhere((p) => p.id == post.doc.id);
                   _posts[index] = PostModel.fromJson({
                     ...data,
                     ...{
@@ -255,6 +254,8 @@ class FirestoreProvider {
     DocumentSnapshot userDocumentSnapshot = await documentReference.get();
 
     postQuerySnapshot.docs.forEach((doc) async {
+      print('doc.id ${doc.id}');
+
       _profilePostModels.add(
         PostModel.fromJson({
           ...doc.data(),

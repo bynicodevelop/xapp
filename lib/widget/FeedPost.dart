@@ -52,6 +52,8 @@ class _FeedPostState extends State<FeedPost> {
         setState(() => _isLiked = result != null);
       }
     });
+
+    print('FeedPost: ${widget.post.id}');
   }
 
   @override

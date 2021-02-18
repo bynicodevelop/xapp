@@ -79,6 +79,12 @@ class _FeedState extends State<Feed> {
             controller: _pageController,
             scrollDirection: Axis.vertical,
             onPageChanged: (index) {
+              if (_currentIndex > index) {
+                print('Go to back...');
+                setState(() => _currentIndex = index);
+                return;
+              }
+
               // Si l'utilisateur n'est pas connecté, alors on le block à X vue de photos
               if (!_authProvider.isAuthenticated &&
                   widgets.length > Config.maxPostWhenUserIsNotAuthenticated)
@@ -88,10 +94,13 @@ class _FeedState extends State<Feed> {
 
               _firestoreProvider.currentPost = snapshot.data[_currentIndex];
 
-              _firestoreProvider.getPost(
-                limit: 1,
-                post: snapshot.data[index],
-              );
+              if (snapshot.data.length - 1 == index) {
+                print('Load new post...');
+                _firestoreProvider.getPost(
+                  limit: 1,
+                  post: snapshot.data[index],
+                );
+              }
             },
             children: widgets,
           );
