@@ -40,7 +40,7 @@ class LandingPage extends StatelessWidget {
               bottom: 15.0,
             ),
             child: Text(
-              t(context).appInLaunch,
+              t(context).appInLaunch.replaceFirst(r'$appName', Config.appName),
               style: Theme.of(context).textTheme.bodyText2,
             ),
           ),

@@ -70,6 +70,18 @@ class _AppState extends State<App> {
 
         // authProvider.logout();
 
+        final TextTheme textTheme = TextTheme(
+          button: TextStyle(
+            fontSize: 16.0,
+          ),
+          headline1: TextStyle(
+            fontSize: 50.0,
+          ),
+          bodyText2: TextStyle(
+            fontSize: 16.0,
+          ),
+        );
+
         return MultiProvider(
           providers: [
             Provider<AuthProvider>(
@@ -103,17 +115,7 @@ class _AppState extends State<App> {
             theme: ThemeData(
               primaryColor: Color(Config.primaryColor),
               accentColor: Color(0xFFFF8F00),
-              textTheme: TextTheme(
-                button: TextStyle(
-                  fontSize: 16.0,
-                ),
-                headline1: TextStyle(
-                  fontSize: 50.0,
-                ),
-                bodyText2: TextStyle(
-                  fontSize: 16.0,
-                ),
-              ),
+              textTheme: textTheme,
               buttonTheme: ButtonThemeData(
                 buttonColor: Color(Config.primaryColor),
                 textTheme: ButtonTextTheme.primary,
