@@ -20,6 +20,19 @@ class LikeButton extends StatefulWidget {
 
 class _LikeButtonState extends State<LikeButton> {
   bool _loading = false;
+  bool _toggleLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(oldWidget) {
+    setState(() => _toggleLiked = widget.hasLiked);
+
+    super.didUpdateWidget(oldWidget);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +49,8 @@ class _LikeButtonState extends State<LikeButton> {
               await widget.onTap();
 
               setState(() => _loading = false);
+
+              setState(() => _toggleLiked = !_toggleLiked);
             },
             child: _loading
                 ? SpinKitPumpingHeart(
@@ -43,9 +58,9 @@ class _LikeButtonState extends State<LikeButton> {
                     size: 60.0,
                   )
                 : Icon(
-                    widget.hasLiked ? Icons.favorite : Icons.favorite_outline,
+                    _toggleLiked ? Icons.favorite : Icons.favorite_outline,
                     size: 60,
-                    color: !widget.hasLiked
+                    color: !_toggleLiked
                         ? Colors.white
                         : Theme.of(context).primaryColor,
                   ),
