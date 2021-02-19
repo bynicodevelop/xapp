@@ -7,6 +7,7 @@ import 'package:xapp/providers/FirestoreProvider.dart';
 import 'package:xapp/providers/FunctionProvider.dart';
 import 'package:xapp/screens/auth/Registration.dart';
 import 'package:xapp/services/Translate.dart';
+import 'package:xapp/services/screens/LoginService.dart';
 import 'package:xapp/transitions/FadeRouteTransition.dart';
 import 'package:xapp/widget/form/LinkButton.dart';
 import 'package:xapp/widget/form/MainButton.dart';
@@ -102,12 +103,17 @@ class _LoginState extends State<Login> {
                                   return;
                                 }
 
-                                try {
-                                  await _authProvider.login(
-                                    _emailController.text,
-                                    _passwordController.text,
-                                  );
+                                final LoginService loginService =
+                                    LoginService();
 
+                                String message = await loginService.auth(
+                                  _emailController.text,
+                                  _passwordController.text,
+                                  _authProvider,
+                                  t(context),
+                                );
+
+                                if (message == null) {
                                   Navigator.pushAndRemoveUntil(
                                     context,
                                     FadeRouteTransition(
@@ -115,28 +121,15 @@ class _LoginState extends State<Login> {
                                     ),
                                     (_) => false,
                                   );
-                                } catch (e) {
-                                  String message =
-                                      t(context).conectionErrorMessage;
 
-                                  switch (e.message) {
-                                    case 'user-not-found':
-                                    case 'wrong-password':
-                                      message =
-                                          t(context).badCredentialErrorMessage;
-                                      break;
-                                    case 'too-many-requests':
-                                      message =
-                                          t(context).tooManyRequestErrorMessage;
-                                      break;
-                                  }
-
-                                  _scaffoldKey.currentState.showSnackBar(
-                                    SnackBar(
-                                      content: Text(message),
-                                    ),
-                                  );
+                                  return;
                                 }
+
+                                _scaffoldKey.currentState.showSnackBar(
+                                  SnackBar(
+                                    content: Text(message),
+                                  ),
+                                );
                               }
                             : null,
                       ),
