@@ -119,13 +119,18 @@ class _LoginState extends State<Login> {
                                   String message =
                                       t(context).conectionErrorMessage;
 
-                                  switch (e.code) {
+                                  switch (e.message) {
                                     case 'user-not-found':
                                     case 'wrong-password':
                                       message =
                                           t(context).badCredentialErrorMessage;
                                       break;
+                                    case 'too-many-requests':
+                                      message =
+                                          t(context).tooManyRequestErrorMessage;
+                                      break;
                                   }
+
                                   _scaffoldKey.currentState.showSnackBar(
                                     SnackBar(
                                       content: Text(message),

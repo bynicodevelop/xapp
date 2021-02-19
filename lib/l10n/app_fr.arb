@@ -127,6 +127,10 @@
   "@badCredentialErrorMessage": {
     "description": "Vos identifiants ne correpondent à aucun membre."
   },
+  "tooManyRequestErrorMessage": "Vous avez essayé trop de tentatives de connexion. Votre compte est temporairement bloqué.",
+  "@tooManyRequestErrorMessage": {
+    "description": "Vous avez essayé trop de tentatives de connexion. Votre compte est temporairement bloqué."
+  },
   "createAccountBtn": "Créer un compte",
   "@createAccountBtn": {
     "description": "Créer un compte"
