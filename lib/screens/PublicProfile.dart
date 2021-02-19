@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+import 'package:xapp/Home.dart';
 import 'package:xapp/models/PostModel.dart';
 import 'package:xapp/models/UserModel.dart';
 import 'package:xapp/providers/AuthProvider.dart';
@@ -114,7 +115,28 @@ class _PublicProfileState extends State<PublicProfile> {
                 ),
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 floating: true,
-                // forceElevated: innerBoxIsScrolled,
+                actions: <Widget>[
+                  Visibility(
+                    visible: _authProvider.isAuthenticated,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.logout,
+                        color: Colors.black,
+                      ),
+                      onPressed: () async {
+                        await _authProvider.logout();
+
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          FadeRouteTransition(
+                            page: Home(),
+                          ),
+                          (_) => false,
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ];
           },

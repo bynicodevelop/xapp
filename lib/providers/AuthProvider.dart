@@ -45,6 +45,8 @@ class AuthProvider {
 
   Future logout() async {
     await auth.signOut();
+
+    _connected = false;
   }
 
   Future<String> createAccount(

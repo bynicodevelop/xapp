@@ -117,7 +117,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             ? () async {
                                 if (_formKey.currentState.validate()) {
                                   String email = widget.email;
-                                  print(email);
+
                                   String uid =
                                       await _authProvider.createAccount(
                                     widget.email,
